@@ -2,9 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom styles */
-
-/* Animation lumière sur le logo */
 @keyframes shine {
   0% {
     transform: translateX(-100%);

@@ -1,72 +1,51 @@
 import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from "next/router";
 
-export default function Header() {
-  const router = useRouter();
-  const [isGuideOpen, setIsGuideOpen] = useState(false);
-
-  const navLinks = [
-    { label: "Affiliation", href: "/affiliation" },
-    { label: "Commissions", href: "/commissions" },
-  ];
-
-  const guideLinks = [
-    { label: "Inscription", href: "/guide/inscription" },
-    { label: "Jeux", href: "/guide/jeux" },
-    { label: "Bonus", href: "/guide/bonus" },
-    { label: "Crypto", href: "/guide/cryptos" },
-    { label: "VIP", href: "/guide/vip" },
-    { label: "FAQ", href: "/guide/faq" },
-    { label: "Astuces", href: "/guide/astuces" },
-  ];
+const Header = () => {
+  const [showGuideMenu, setShowGuideMenu] = useState(false);
 
   return (
-    <header className="bg-[#1c1c44] h-[100px] shadow-md">
-      <div className="max-w-5xl mx-auto px-4 h-full flex items-center justify-between relative">
-        {/* Logo avec effet lumière */}
-        <Link href="/" className="text-white text-2xl font-bold relative overflow-hidden">
-          <span className="relative z-10">ROUNDERS</span>
-          <span className="absolute inset-0 animate-shine bg-gradient-to-r from-transparent via-white to-transparent opacity-20" />
+    <header className="bg-[#1e1e1e] h-[100px] shadow-md relative z-50">
+      <div className="max-w-5xl mx-auto h-full px-4 flex items-center justify-between">
+        <Link href="/" className="relative text-white text-2xl font-bold">
+          <span className="relative z-10">Rounders</span>
+          <span className="absolute top-0 left-0 w-full h-full overflow-hidden">
+            <span className="absolute top-0 left-0 w-full h-full bg-white opacity-20 animate-shine" />
+          </span>
         </Link>
-
-        {/* Navigation */}
-        <nav className="flex space-x-6">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`text-white hover:text-blue-400 transition-all duration-200 ${
-                router.pathname === link.href ? "font-semibold" : ""
-              }`}
-            >
-              {link.label}
-            </Link>
-          ))}
-
-          {/* Guide Stake */}
+        <nav className="flex items-center space-x-6 text-white font-medium text-lg">
+          <Link href="/affiliation" className="hover:underline hover:text-blue-400 transition duration-200">
+            Affiliation
+          </Link>
+          <Link href="/commissions" className="hover:underline hover:text-blue-400 transition duration-200">
+            Commissions
+          </Link>
           <div
+            onMouseEnter={() => setShowGuideMenu(true)}
+            onMouseLeave={() => setShowGuideMenu(false)}
             className="relative"
-            onMouseEnter={() => setIsGuideOpen(true)}
-            onMouseLeave={() => setIsGuideOpen(false)}
           >
-            <button className="text-white hover:text-blue-400 transition-all duration-200">
+            <span className="cursor-pointer hover:text-blue-400 transition duration-200">
               Guide Stake
-            </button>
-
-            {isGuideOpen && (
-              <div className="absolute top-full left-0 mt-1 bg-[#1c1c44] border border-gray-600 shadow-lg rounded z-50 w-40">
-                <ul className="text-white text-sm">
-                  {guideLinks.map((item) => (
-                    <li key={item.href}>
-                      <Link
-                        href={item.href}
-                        className="block px-4 py-2 hover:bg-blue-600 transition-all"
-                      >
-                        {item.label}
-                      </Link>
-                    </li>
-                  ))}
+            </span>
+            {showGuideMenu && (
+              <div className="absolute top-full left-0 bg-[#2b2b2b] mt-2 rounded shadow-lg z-50">
+                <ul className="min-w-[180px] py-2">
+                  <li>
+                    <Link href="/guide/inscription" className="block px-4 py-2 hover:bg-gray-700">Inscription</Link>
+                  </li>
+                  <li>
+                    <Link href="/guide/bonus" className="block px-4 py-2 hover:bg-gray-700">Bonus</Link>
+                  </li>
+                  <li>
+                    <Link href="/guide/jeux" className="block px-4 py-2 hover:bg-gray-700">Jeux</Link>
+                  </li>
+                  <li>
+                    <Link href="/guide/cryptos" className="block px-4 py-2 hover:bg-gray-700">Cryptos</Link>
+                  </li>
+                  <li>
+                    <Link href="/guide/faq" className="block px-4 py-2 hover:bg-gray-700">FAQ</Link>
+                  </li>
                 </ul>
               </div>
             )}
@@ -75,4 +54,6 @@ export default function Header() {
       </div>
     </header>
   );
-}
+};
+
+export default Header;
