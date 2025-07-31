@@ -1,59 +1,33 @@
-// pages/guide/inscription.js
-import Head from "next/head";
-import Image from "next/image";
+import Layout from '../../components/Layout';
+import Link from 'next/link';
 
-export default function GuideInscriptionPage() {
+export default function Inscription() {
   return (
-    <>
-      <Head>
-        <title>Inscription sur Stake - Guide</title>
-        <meta
-          name="description"
-          content="Inscrivez-vous sur Stake en quelques clics et commencez à jouer avec notre lien affilié pour bénéficier d'avantages exclusifs."
-        />
-      </Head>
+    <Layout title="Inscription sur Stake">
+      <div className="max-w-5xl mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold mb-6">Comment s’inscrire sur Stake</h1>
 
-      <section className="max-w-4xl mx-auto px-4 py-10">
-        <h1 className="text-4xl font-bold mb-6">S'inscrire sur Stake</h1>
-
-        <p className="text-lg mb-6">
-          Créer un compte sur Stake est rapide et gratuit. En passant par notre
-          lien affilié, vous accédez à nos offres exclusives et bénéficiez du suivi de vos commissions.
+        <p className="mb-4">
+          Voici la procédure simple pour s’inscrire en toute sécurité sur Stake :
         </p>
 
-        <div className="mb-6">
-          <Image
-            src="/images/inscription-stake.jpg"
-            alt="Formulaire d'inscription Stake"
-            width={800}
-            height={450}
-            className="rounded-xl shadow"
-          />
-        </div>
-
-        <h2 className="text-2xl font-semibold mt-8 mb-4">Étapes pour s'inscrire</h2>
-        <ol className="list-decimal list-inside text-lg space-y-2 mb-6">
+        <ol className="list-decimal list-inside mb-4 space-y-2">
           <li>
-            Cliquez sur notre lien affilié :{" "}
-            <a
-              href="https://stake.bet/?c=rounders&offer=rounders"
-              className="text-blue-400 underline"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              stake.bet/?c=rounders&offer=rounders
-            </a>
+            Rendez-vous sur notre lien d’affiliation :{' '}
+            <Link href="/" className="text-blue-600 underline">
+              rounders.pro
+            </Link>
           </li>
-          <li>Choisissez un nom d'utilisateur et un mot de passe</li>
-          <li>Entrez une adresse email valide</li>
-          <li>Validez votre inscription et connectez-vous</li>
+          <li>Créez un compte avec une adresse e-mail valide.</li>
+          <li>
+            Validez votre inscription et connectez-vous. Vous êtes désormais affilié à notre équipe Rounders.
+          </li>
         </ol>
 
-        <p className="text-lg">
-          Une fois connecté, vous pourrez déposer des fonds en crypto et commencer à
-          jouer immédiatement.
+        <p className="mb-4">
+          Vous pouvez ensuite commencer à déposer des cryptos pour jouer, et suivre vos gains affiliés dans votre espace personnel.
         </p>
-      </section>
-    </>
+      </div>
+    </Layout>
   );
 }
