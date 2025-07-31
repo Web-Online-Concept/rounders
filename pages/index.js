@@ -1,53 +1,59 @@
-// pages/index.js
-import Head from "next/head";
-import Link from "next/link";
 
-export default function HomePage() {
+import Link from 'next/link'
+
+export default function Home() {
   return (
-    <>
-      <Head>
-        <title>Rounders – Affiliation Stake</title>
-        <meta
-          name="description"
-          content="Profitez de 50 % de reversement sur nos commissions affiliées Stake. Suivez vos gains en temps réel et accédez à notre guide complet pour tout savoir sur Stake."
+    <main className="max-w-5xl mx-auto px-4 py-10 space-y-10">
+      {/* Bloc 1 : Affiliation */}
+      <div className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300">
+        <img
+          src="/images/affiliation.jpg"
+          alt="Affiliation"
+          className="w-full h-48 object-cover rounded-t-2xl"
         />
-      </Head>
-
-      <main className="max-w-4xl mx-auto px-4 py-10 space-y-12">
-        {/* Bloc 1 – Affiliation */}
-        <section className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition">
-          <h2 className="text-3xl font-bold mb-4">💸 50 % de commissions reversées</h2>
-          <p className="text-gray-700 text-lg">
-            Contrairement aux autres affiliés, nous vous reversons **50 % de notre commission Stake**. 
-            Cela signifie que plus vous jouez, plus vous récupérez d’argent en retour, chaque semaine !
+        <div className="p-6">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">🎯 50 % de commissions reversées</h2>
+          <p className="text-gray-700 mb-4">
+            Contrairement aux autres affiliés, nous vous reversons <strong>50 %</strong> de notre commission Stake.
+            Cela signifie que plus vous jouez, plus vous récupérez d'argent en retour, chaque semaine !
             Rejoignez notre communauté et commencez à profiter de notre programme exclusif.
           </p>
-        </section>
+        </div>
+      </div>
 
-        {/* Bloc 2 – Commissions */}
-        <section className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition">
-          <h2 className="text-3xl font-bold mb-4">📊 Suivi des gains & paiements</h2>
-          <p className="text-gray-700 text-lg">
-            Consultez en temps réel vos gains affiliés, les commissions que vous avez générées, 
-            et les paiements déjà effectués. Vous savez toujours où vous en êtes, en toute transparence.
+      {/* Bloc 2 : Commissions */}
+      <div className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300">
+        <img
+          src="/images/commissions.jpg"
+          alt="Suivi des gains"
+          className="w-full h-48 object-cover rounded-t-2xl"
+        />
+        <div className="p-6">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">📈 Suivi des gains & paiements</h2>
+          <p className="text-gray-700 mb-4">
+            Consultez en temps réel vos gains affiliés, les commissions que vous avez générées, et les paiements déjà effectués.
+            Vous savez toujours où vous en êtes, en toute transparence.
           </p>
-          <Link href="/commissions" className="inline-block mt-4 text-blue-600 hover:underline font-semibold">
-            → Voir mes commissions
-          </Link>
-        </section>
+          <Link href="/commissions" className="text-blue-600 hover:underline">→ Voir mes commissions</Link>
+        </div>
+      </div>
 
-        {/* Bloc 3 – Guide Stake */}
-        <section className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition">
-          <h2 className="text-3xl font-bold mb-4">🎓 Guide complet Stake</h2>
-          <p className="text-gray-700 text-lg">
-            Vous débutez sur Stake ? Découvrez notre guide complet pour apprendre à vous inscrire, activer 
-            les bonus, jouer en sécurité, devenir VIP et plus encore.
+      {/* Bloc 3 : Guide Stake */}
+      <div className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300">
+        <img
+          src="/images/guide.jpg"
+          alt="Guide Stake"
+          className="w-full h-48 object-cover rounded-t-2xl"
+        />
+        <div className="p-6">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">📚 Guide complet Stake</h2>
+          <p className="text-gray-700 mb-4">
+            Vous débutez sur Stake ? Découvrez notre guide complet pour apprendre à vous inscrire, activer les bonus,
+            jouer en sécurité, devenir VIP et plus encore.
           </p>
-          <Link href="/guide" className="inline-block mt-4 text-blue-600 hover:underline font-semibold">
-            → Accéder au guide Stake
-          </Link>
-        </section>
-      </main>
-    </>
-  );
+          <Link href="/guide/inscription" className="text-blue-600 hover:underline">→ Accéder au guide Stake</Link>
+        </div>
+      </div>
+    </main>
+  )
 }
