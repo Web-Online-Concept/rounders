@@ -1,32 +1,53 @@
 // pages/index.js
-
+import Head from "next/head";
 import Link from "next/link";
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6 py-16">
-      <h1 className="text-4xl md:text-5xl font-bold text-center text-green-400 mb-6">
-        Rejoignez Stake avec un avantage exclusif
-      </h1>
+    <>
+      <Head>
+        <title>Rounders – Affiliation Stake</title>
+        <meta
+          name="description"
+          content="Profitez de 50 % de reversement sur nos commissions affiliées Stake. Suivez vos gains en temps réel et accédez à notre guide complet pour tout savoir sur Stake."
+        />
+      </Head>
 
-      <p className="text-lg text-center text-gray-300 max-w-2xl mb-6">
-        En passant par notre lien affilié, vous bénéficiez non seulement de tous les bonus Stake,
-        mais nous vous reversons également <strong>50 % de notre commission affiliée</strong>.
-      </p>
+      <main className="max-w-4xl mx-auto px-4 py-10 space-y-12">
+        {/* Bloc 1 – Affiliation */}
+        <section className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition">
+          <h2 className="text-3xl font-bold mb-4">💸 50 % de commissions reversées</h2>
+          <p className="text-gray-700 text-lg">
+            Contrairement aux autres affiliés, nous vous reversons **50 % de notre commission Stake**. 
+            Cela signifie que plus vous jouez, plus vous récupérez d’argent en retour, chaque semaine !
+            Rejoignez notre communauté et commencez à profiter de notre programme exclusif.
+          </p>
+        </section>
 
-      <p className="text-md text-center text-gray-400 max-w-xl mb-8">
-        Vous savez à tout moment combien vous rapportez, et combien vous allez toucher.
-        Suivi transparent, classement, reversements manuels : tout est fait pour récompenser nos affiliés.
-      </p>
+        {/* Bloc 2 – Commissions */}
+        <section className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition">
+          <h2 className="text-3xl font-bold mb-4">📊 Suivi des gains & paiements</h2>
+          <p className="text-gray-700 text-lg">
+            Consultez en temps réel vos gains affiliés, les commissions que vous avez générées, 
+            et les paiements déjà effectués. Vous savez toujours où vous en êtes, en toute transparence.
+          </p>
+          <Link href="/commissions" className="inline-block mt-4 text-blue-600 hover:underline font-semibold">
+            → Voir mes commissions
+          </Link>
+        </section>
 
-      <a
-        href="https://stake.bet/?c=rounders&offer=rounders"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transition"
-      >
-        🎰 S’inscrire maintenant
-      </a>
-    </div>
+        {/* Bloc 3 – Guide Stake */}
+        <section className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition">
+          <h2 className="text-3xl font-bold mb-4">🎓 Guide complet Stake</h2>
+          <p className="text-gray-700 text-lg">
+            Vous débutez sur Stake ? Découvrez notre guide complet pour apprendre à vous inscrire, activer 
+            les bonus, jouer en sécurité, devenir VIP et plus encore.
+          </p>
+          <Link href="/guide" className="inline-block mt-4 text-blue-600 hover:underline font-semibold">
+            → Accéder au guide Stake
+          </Link>
+        </section>
+      </main>
+    </>
   );
 }
