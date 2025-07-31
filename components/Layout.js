@@ -1,44 +1,30 @@
 // components/Layout.js
 import Link from "next/link";
-import { useRouter } from "next/router";
 
 export default function Layout({ children }) {
-  const router = useRouter();
-  const { locale, locales, asPath } = router;
-
-  const toggleLocale = locale === "fr" ? "en" : "fr";
-
   return (
-    <div className="min-h-screen flex flex-col bg-gray-900 text-white">
-      {/* HEADER */}
-      <header className="bg-gray-800 py-4 px-6 shadow-md">
-        <nav className="flex justify-between items-center max-w-6xl mx-auto">
-          <Link href="/" locale={locale} className="text-2xl font-bold text-green-400">
-            Rounders.pro
+    <div className="min-h-screen bg-black text-white">
+      <header className="bg-gray-900 p-4 shadow-md">
+        <nav className="max-w-6xl mx-auto flex flex-wrap items-center justify-between">
+          <Link href="/" className="text-xl font-bold text-white hover:text-blue-400">
+            Rounders
           </Link>
-          <div className="space-x-4 flex items-center">
-            <Link href="/bonus" locale={locale} className="hover:text-green-400">Bonus</Link>
-            <Link href="/jeux" locale={locale} className="hover:text-green-400">Jeux</Link>
-            <Link href="/strategies" locale={locale} className="hover:text-green-400">Stratégies</Link>
-            <Link href="/faq" locale={locale} className="hover:text-green-400">FAQ</Link>
-            <Link href="/commissions" locale={locale} className="hover:text-green-400">Commissions</Link>
-
-            {/* Switch langue */}
-            <Link href={asPath} locale={toggleLocale} className="ml-4 text-sm text-gray-400 underline hover:text-white">
-              {toggleLocale.toUpperCase()}
-            </Link>
+          <div className="flex gap-4 mt-2 sm:mt-0 flex-wrap text-sm sm:text-base">
+            <Link href="/bonus" className="hover:text-blue-400">Bonus</Link>
+            <Link href="/jeux" className="hover:text-blue-400">Jeux</Link>
+            <Link href="/guide" className="hover:text-blue-400">Guide</Link>
+            <Link href="/faq" className="hover:text-blue-400">FAQ</Link>
+            <Link href="/classement" className="hover:text-blue-400">Classement</Link>
+            <Link href="/commissions" className="hover:text-blue-400">Commissions</Link>
+            <Link href="/contact" className="hover:text-blue-400">Contact</Link>
           </div>
         </nav>
       </header>
 
-      {/* CONTENU */}
-      <main className="flex-grow max-w-5xl mx-auto w-full px-4 py-8">
-        {children}
-      </main>
+      <main className="max-w-6xl mx-auto py-8 px-4">{children}</main>
 
-      {/* FOOTER */}
-      <footer className="bg-gray-800 py-4 text-center text-sm text-gray-400">
-        © {new Date().getFullYear()} Rounders.pro — Tous droits réservés.
+      <footer className="bg-gray-900 p-4 text-center text-sm text-gray-400">
+        &copy; {new Date().getFullYear()} Rounders.pro – Tous droits réservés.
       </footer>
     </div>
   );
