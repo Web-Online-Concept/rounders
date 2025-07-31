@@ -15,96 +15,93 @@ export default function Home() {
       <main className="min-h-screen bg-gray-50 py-12">
         <div className="max-w-5xl mx-auto px-4">
           
-          {/* Grille de 3 colonnes */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* 3 blocs verticaux côte à côte */}
+          <div className="flex flex-col md:flex-row gap-8 justify-center">
             
             {/* Bloc 1 - Présentation */}
-            <div className="bg-white rounded-2xl shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-xl flex flex-col">
-              <div className="p-6 text-center flex-1 flex flex-col">
-                <div className="w-24 h-24 mx-auto mb-4 relative">
-                  <Image
-                    src="/images/presentation.jpg"
-                    alt="Présentation du programme d&apos;affiliation"
-                    fill
-                    className="rounded-full object-cover shadow-md"
-                    sizes="96px"
-                    priority
-                  />
-                </div>
-                <h2 className="text-xl font-bold mb-3 text-gray-800">
+            <div className="bg-white rounded-2xl shadow-lg overflow-hidden w-full md:w-[300px] h-[600px] flex flex-col">
+              {/* Image en haut */}
+              <div className="h-[200px] relative">
+                <Image
+                  src="/images/presentation.jpg"
+                  alt="Présentation du programme d&apos;affiliation"
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              </div>
+              {/* Contenu en dessous */}
+              <div className="p-6 flex-1 flex flex-col">
+                <h2 className="text-xl font-bold mb-4 text-gray-800 text-center">
                   Gagnez plus avec notre affiliation Stake
                 </h2>
-                <p className="text-gray-600 text-sm leading-relaxed mb-4 flex-1">
+                <p className="text-gray-600 text-sm leading-relaxed mb-6 flex-1">
                   Rejoignez notre programme et recevez <span className="font-semibold text-green-600">50% de nos commissions affiliées</span>. 
                   En plus des avantages Stake, vous bénéficiez d&apos;un suivi transparent et de paiements garantis chaque mois.
                 </p>
-                <div className="mt-auto">
-                  <Link href="/affiliation">
-                    <span className="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-full transition-all duration-300 transform hover:scale-105 cursor-pointer text-sm">
-                      En savoir plus
-                    </span>
-                  </Link>
-                </div>
+                <Link href="/affiliation">
+                  <span className="block text-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-full transition-all duration-300 cursor-pointer">
+                    En savoir plus
+                  </span>
+                </Link>
               </div>
             </div>
 
             {/* Bloc 2 - Commissions */}
-            <div className="bg-white rounded-2xl shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-xl flex flex-col">
-              <div className="p-6 text-center flex-1 flex flex-col">
-                <div className="w-24 h-24 mx-auto mb-4 relative">
-                  <Image
-                    src="/images/commissions.jpg"
-                    alt="Suivi des commissions"
-                    fill
-                    className="rounded-full object-cover shadow-md"
-                    sizes="96px"
-                  />
-                </div>
-                <h2 className="text-xl font-bold mb-3 text-gray-800">
+            <div className="bg-white rounded-2xl shadow-lg overflow-hidden w-full md:w-[300px] h-[600px] flex flex-col">
+              {/* Image en haut */}
+              <div className="h-[200px] relative">
+                <Image
+                  src="/images/commissions.jpg"
+                  alt="Suivi des commissions"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              {/* Contenu en dessous */}
+              <div className="p-6 flex-1 flex flex-col">
+                <h2 className="text-xl font-bold mb-4 text-gray-800 text-center">
                   Suivi des commissions et paiements
                 </h2>
-                <p className="text-gray-600 text-sm leading-relaxed mb-4 flex-1">
+                <p className="text-gray-600 text-sm leading-relaxed mb-6 flex-1">
                   Consultez votre tableau de bord pour suivre vos gains en temps réel, 
                   voir les paiements effectués et accéder à votre historique complet. 
                   Tout est automatisé pour une gestion simple et transparente.
                 </p>
-                <div className="mt-auto">
-                  <Link href="/commissions">
-                    <span className="inline-flex items-center bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-6 rounded-full transition-all duration-300 transform hover:scale-105 cursor-pointer text-sm">
-                      Voir mes commissions
-                    </span>
-                  </Link>
-                </div>
+                <Link href="/commissions">
+                  <span className="block text-center bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-full transition-all duration-300 cursor-pointer">
+                    Voir mes commissions
+                  </span>
+                </Link>
               </div>
             </div>
 
             {/* Bloc 3 - Guide Stake */}
-            <div className="bg-white rounded-2xl shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-xl flex flex-col">
-              <div className="p-6 text-center flex-1 flex flex-col">
-                <div className="w-24 h-24 mx-auto mb-4 relative">
-                  <Image
-                    src="/images/guide.jpg"
-                    alt="Guide complet Stake"
-                    fill
-                    className="rounded-full object-cover shadow-md"
-                    sizes="96px"
-                  />
-                </div>
-                <h2 className="text-xl font-bold mb-3 text-gray-800">
+            <div className="bg-white rounded-2xl shadow-lg overflow-hidden w-full md:w-[300px] h-[600px] flex flex-col">
+              {/* Image en haut */}
+              <div className="h-[200px] relative">
+                <Image
+                  src="/images/guide.jpg"
+                  alt="Guide complet Stake"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              {/* Contenu en dessous */}
+              <div className="p-6 flex-1 flex flex-col">
+                <h2 className="text-xl font-bold mb-4 text-gray-800 text-center">
                   Le guide complet Stake
                 </h2>
-                <p className="text-gray-600 text-sm leading-relaxed mb-4 flex-1">
+                <p className="text-gray-600 text-sm leading-relaxed mb-6 flex-1">
                   Découvrez comment maximiser vos bonus, explorer tous les jeux proposés, 
                   comprendre les cryptomonnaies et optimiser votre expérience Stake 
                   grâce à notre guide détaillé et nos conseils d&apos;experts.
                 </p>
-                <div className="mt-auto">
-                  <Link href="/guide">
-                    <span className="inline-flex items-center bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded-full transition-all duration-300 transform hover:scale-105 cursor-pointer text-sm">
-                      Lire le guide complet
-                    </span>
-                  </Link>
-                </div>
+                <Link href="/guide">
+                  <span className="block text-center bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-full transition-all duration-300 cursor-pointer">
+                    Lire le guide complet
+                  </span>
+                </Link>
               </div>
             </div>
 
