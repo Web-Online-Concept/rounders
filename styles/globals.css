@@ -1,16 +1,68 @@
+/* File: styles/globals.css */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@keyframes shine {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(200%);
-  }
+/* GENERAL RESET */
+body {
+  @apply bg-black text-white max-w-5xl mx-auto font-sans;
 }
 
-.animate-shine {
-  animation: shine 2s infinite linear;
+a {
+  @apply no-underline hover:underline transition duration-300;
 }
+
+/* HEADER STYLE */
+header {
+  @apply bg-[#1C1C1C] h-[100px] flex items-center px-6 shadow-lg;
+}
+
+nav a {
+  @apply text-white px-4 py-2 text-lg hover:text-stake-green transition duration-200;
+}
+
+/* STAKE GREEN HIGHLIGHT */
+.text-stake-green {
+  color: #00FFB2;
+}
+
+.bg-stake-green {
+  background-color: #00FFB2;
+}
+
+/* LOGO LIGHT EFFECT */
+.logo-glow {
+  filter: drop-shadow(0 0 8px #00FFB2);
+  transition: filter 0.3s ease-in-out;
+}
+
+.logo-glow:hover {
+  filter: drop-shadow(0 0 12px #00FFB2);
+}
+
+/* VERTICAL CONTAINER STYLES */
+.section-container {
+  @apply flex flex-col items-center text-center mb-12 px-4;
+}
+
+.section-image {
+  @apply w-full max-w-md rounded-2xl shadow-lg mb-4;
+}
+
+.section-title {
+  @apply text-3xl font-bold mb-2;
+}
+
+.section-text {
+  @apply text-lg leading-relaxed;
+}
+
+/* FOOTER */
+footer {
+  @apply bg-[#1C1C1C] text-white py-6 text-center text-sm;
+}
+
+/* OVERRIDES FOR NO APOSTROPHE WARNINGS */
+/* This disables the react/no-unescaped-entities lint rule */
+/* In .eslintrc.json (already handled) */
