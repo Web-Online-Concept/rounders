@@ -1,117 +1,319 @@
-/* /styles/globals.css */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Reset de base */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-/* Reset et base */
-@layer base {
-  * {
-    box-sizing: border-box;
-  }
+html, body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: #f5f5f5;
+  color: #333;
+  line-height: 1.6;
+}
 
-  html {
-    scroll-behavior: smooth;
-  }
+/* Header */
+.header {
+  background-color: #1a2c38;
+  height: 80px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  position: relative;
+  z-index: 100;
+}
 
-  body {
-    @apply m-0 p-0 font-sans text-gray-900 bg-gray-50;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  }
+.header-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  height: 100%;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-bold;
-  }
+.logo {
+  color: white;
+  text-decoration: none;
+  font-size: 24px;
+  font-weight: bold;
+  position: relative;
+  overflow: hidden;
+}
 
-  a {
-    @apply no-underline transition-colors duration-200;
+.logo-shine {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  animation: shine 3s infinite;
+}
+
+@keyframes shine {
+  100% {
+    left: 100%;
   }
 }
 
-/* Composants personnalisés */
-@layer components {
-  /* Header Stake style */
-  .header-stake {
-    @apply bg-[#1a2c38] h-20 shadow-lg;
-  }
-
-  /* Logo avec animation */
-  .logo-animated {
-    @apply relative overflow-hidden;
-  }
-
-  .logo-animated::after {
-    content: '';
-    @apply absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-20;
-    transform: translateX(-100%);
-    animation: shine 3s linear infinite;
-  }
-
-  /* Menu dropdown */
-  .dropdown-menu {
-    @apply absolute top-full left-0 mt-2 bg-[#213743] rounded-lg shadow-xl opacity-0 invisible transition-all duration-200;
-  }
-
-  .dropdown:hover .dropdown-menu {
-    @apply opacity-100 visible;
-  }
-
-  /* Boutons principaux */
-  .btn-primary {
-    @apply inline-flex items-center justify-center px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-lg;
-  }
-
-  .btn-blue {
-    @apply bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white;
-  }
-
-  .btn-purple {
-    @apply bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white;
-  }
-
-  .btn-green {
-    @apply bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white;
-  }
-
-  /* Cartes */
-  .card {
-    @apply bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl;
-  }
-
-  .card-vertical {
-    @apply w-[250px] h-[600px] flex flex-col;
-  }
-
-  /* Animations */
-  @keyframes shine {
-    0% {
-      transform: translateX(-100%);
-    }
-    100% {
-      transform: translateX(100%);
-    }
-  }
-
-  @keyframes glow {
-    0%, 100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0.7;
-    }
-  }
+/* Navigation */
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 30px;
 }
 
-/* Utilities personnalisées */
-@layer utilities {
-  .text-gradient {
-    @apply bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent;
+.nav a {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.nav a:hover {
+  color: #4a9eff;
+}
+
+/* Dropdown */
+.dropdown {
+  position: relative;
+}
+
+.dropdown-trigger {
+  cursor: pointer;
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.dropdown-trigger:hover {
+  color: #4a9eff;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 10px;
+  background-color: #213743;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  min-width: 180px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s;
+}
+
+.dropdown:hover .dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+}
+
+.dropdown-menu ul {
+  list-style: none;
+  padding: 8px 0;
+}
+
+.dropdown-menu a {
+  display: block;
+  padding: 10px 16px;
+  color: white;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.dropdown-menu a:hover {
+  background-color: rgba(255,255,255,0.1);
+}
+
+/* Page principale */
+.main-container {
+  min-height: calc(100vh - 80px);
+  padding: 60px 20px;
+}
+
+.blocks-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+/* Blocs */
+.block {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  width: 300px;
+  height: 600px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.block:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.15);
+}
+
+.block-image {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  position: relative;
+}
+
+.block-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+
+.block:hover .block-image img {
+  transform: scale(1.1);
+}
+
+.block-content {
+  padding: 30px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.block-title {
+  font-size: 22px;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.block-description {
+  font-size: 15px;
+  color: #666;
+  text-align: center;
+  line-height: 1.6;
+  flex: 1;
+}
+
+.block-description .highlight {
+  font-weight: 600;
+  color: #00d632;
+}
+
+.block-button {
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  padding: 14px 24px;
+  border-radius: 30px;
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 16px;
+  transition: all 0.3s;
+  margin-top: 20px;
+}
+
+.button-blue {
+  background: linear-gradient(135deg, #4a9eff 0%, #3b82f6 100%);
+}
+
+.button-blue:hover {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.button-purple {
+  background: linear-gradient(135deg, #b367ff 0%, #a855f7 100%);
+}
+
+.button-purple:hover {
+  background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(168, 85, 247, 0.4);
+}
+
+.button-green {
+  background: linear-gradient(135deg, #00d632 0%, #10b981 100%);
+}
+
+.button-green:hover {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+/* Call to action */
+.cta-section {
+  text-align: center;
+  margin-top: 80px;
+}
+
+.cta-text {
+  font-size: 18px;
+  color: #666;
+  margin-bottom: 24px;
+}
+
+.cta-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 40px;
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 30px;
+  font-size: 18px;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+
+.cta-button:hover {
+  background: linear-gradient(135deg, #111827 0%, #000000 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+}
+
+.cta-button svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header-container {
+    padding: 0 15px;
   }
 
-  .hover-lift {
-    @apply transition-transform duration-300 hover:-translate-y-1;
+  .nav {
+    gap: 20px;
   }
 
-  .image-overlay {
-    @apply absolute inset-0 bg-gradient-to-t from-black/50 to-transparent;
+  .nav a {
+    font-size: 14px;
+  }
+
+  .blocks-wrapper {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .block {
+    width: 100%;
+    max-width: 350px;
+  }
+
+  .cta-button {
+    font-size: 16px;
+    padding: 14px 32px;
   }
 }
