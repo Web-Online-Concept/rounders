@@ -35,11 +35,11 @@ export default function AffiliationPage() {
           </div>
         </section>
 
-        {/* Comment ça marche */}
+        {/* Comment ça marche - MODIFIÉ POUR MOBILE */}
         <section className="section-wrapper">
           <div className="section-container">
             <h2 className="section-title">{t.affiliation.howItWorks.title}</h2>
-            <div className="cards-grid" style={{
+            <div className="cards-grid cards-grid-mobile-scroll" style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(4, 1fr)',
               gap: '20px'
@@ -100,17 +100,18 @@ export default function AffiliationPage() {
             </div>
           </div>
         </section>
-{/* Calcul des commissions */}
+        
+        {/* Calcul des commissions - MODIFIÉ POUR MOBILE */}
         <section className="section-wrapper dark-bg">
           <div className="section-container">
             <h2 className="section-title">{t.affiliation.commissionCalc.title}</h2>
-            <div className="commission-box">
+            <div className="commission-box commission-box-mobile-fix">
               <div className="honest-talk">
                 <h3>{t.affiliation.commissionCalc.transparent.title}</h3>
                 <p dangerouslySetInnerHTML={{ __html: t.affiliation.commissionCalc.transparent.description }} />
               </div>
 
-              <div className="cashback-explanation">
+              <div className="cashback-explanation cashback-mobile-fix">
                 <div className="cashback-header">
                   <span className="cashback-icon">💸</span>
                   <h3>{t.affiliation.commissionCalc.cashback.title}</h3>
@@ -150,7 +151,7 @@ export default function AffiliationPage() {
                 </div>
               </div>
 
-              <div className="bottom-line">
+              <div className="bottom-line bottom-line-mobile-fix">
                 <h3>{t.affiliation.commissionCalc.deal.title}</h3>
                 <div className="deal-points">
                   <div className="deal-point">
@@ -168,7 +169,7 @@ export default function AffiliationPage() {
                 </div>
               </div>
 
-              <div className="warning-box">
+              <div className="warning-box warning-box-mobile-fix">
                 <span className="warning-icon">💡</span>
                 <p dangerouslySetInnerHTML={{ __html: t.affiliation.commissionCalc.reminder }} />
               </div>

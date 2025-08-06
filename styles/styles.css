@@ -1573,6 +1573,68 @@ body {
 .affiliation-page .section-wrapper:first-of-type {
   padding-top: 40px !important;
 }
+
+/* À ajouter dans votre section @media (max-width: 768px) */
+
+/* Correction des 4 cartes "Comment ça marche" - scroll horizontal */
+.cards-grid-mobile-scroll {
+  display: flex !important;
+  overflow-x: auto !important;
+  scroll-snap-type: x mandatory !important;
+  -webkit-overflow-scrolling: touch !important;
+  gap: 15px !important;
+  padding: 0 20px 20px 20px !important;
+  margin: 0 -20px !important;
+}
+
+.cards-grid-mobile-scroll .info-card {
+  flex: 0 0 280px !important;
+  scroll-snap-align: start !important;
+}
+
+.cards-grid-mobile-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+
+.cards-grid-mobile-scroll::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+
+.cards-grid-mobile-scroll::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+/* Correction largeur commission box sur mobile */
+.commission-box-mobile-fix {
+  padding: 30px 20px !important;
+  margin: 0 -20px !important;
+  border-radius: 0 !important;
+}
+
+/* Correction largeur cashback explanation */
+.cashback-mobile-fix {
+  padding: 30px 20px !important;
+  margin: 0 -20px 30px -20px !important;
+  border-radius: 0 !important;
+}
+
+/* Correction largeur bottom line */
+.bottom-line-mobile-fix {
+  padding: 30px 20px !important;
+  margin: 0 -20px 20px -20px !important;
+  border-radius: 0 !important;
+}
+
+/* Correction largeur warning box */
+.warning-box-mobile-fix {
+  padding: 20px !important;
+  margin: 0 -20px !important;
+  border-radius: 0 !important;
+  border-left: none !important;
+  border-right: none !important;
+}
   
   /* ===============================================
    PAGES LÉGALES
