@@ -206,6 +206,17 @@ const Header = () => {
           <button 
             className="mobile-nav-button"
             onClick={() => {
+              router.push('/declaration', '/declaration', { locale });
+              setShowMobileMenu(false);
+            }}
+          >
+            <span className="button-emoji">📝</span>
+            <span>{t.footer?.sitemap?.validateAffiliation || "Valider son affiliation"}</span>
+          </button>
+
+          <button 
+            className="mobile-nav-button"
+            onClick={() => {
               router.push('/commissions', '/commissions', { locale });
               setShowMobileMenu(false);
             }}
@@ -213,21 +224,9 @@ const Header = () => {
             <span className="button-emoji">📊</span>
             <span>{t.header.commissions}</span>
           </button>
-
-          <button 
-            className="mobile-nav-button"
-            onClick={() => {
-              router.push('/declaration', '/declaration', { locale });
-              setShowMobileMenu(false);
-            }}
-          >
-            <span className="button-emoji">📝</span>
-            <span>Déclarez votre affiliation</span>
-          </button>
           
           {/* Sélecteur de langue mobile */}
           <div className="mobile-language-selector">
-            <h3>LANGAGE</h3>
             <div className="mobile-language-options">
               {languages.map((lang) => (
                 <button
@@ -335,18 +334,9 @@ const Header = () => {
 
         /* Section langue mobile */
         .mobile-language-selector {
-          margin-top: 40px;
-          padding-top: 40px;
+          margin-top: 30px;
+          padding-top: 30px;
           border-top: 2px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .mobile-language-selector h3 {
-          color: white;
-          font-size: 16px;
-          text-align: center;
-          letter-spacing: 2px;
-          margin-bottom: 20px;
-          font-weight: 700;
         }
 
         .mobile-language-options {
