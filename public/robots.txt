@@ -1,0 +1,49 @@
+# Robots.txt pour Rounders.pro
+# https://rounders.pro
+
+# Autoriser tous les robots
+User-agent: *
+Allow: /
+
+# Pages à indexer en priorité
+Allow: /
+Allow: /jouer-sur-stake
+Allow: /affiliation
+Allow: /commissions
+
+# Pages à ne pas indexer
+Disallow: /admin/
+Disallow: /api/
+Disallow: /_next/
+Disallow: /declaration
+Disallow: /success
+
+# Sitemap
+Sitemap: https://rounders.pro/sitemap.xml
+
+# Délai entre les requêtes (en secondes)
+Crawl-delay: 1
+
+# Robots spécifiques
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# Bloquer les mauvais bots
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+# GPTBot (OpenAI)
+User-agent: GPTBot
+Disallow: /

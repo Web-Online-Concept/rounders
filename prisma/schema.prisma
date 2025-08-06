@@ -1,0 +1,110 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Affiliate {
+  id                String    @id @default(cuid())
+  pseudoMasked      String    // Ex: ************S10
+  pseudoReal        String?   // Le vrai pseudo une fois confirmé
+  registrationDate  DateTime  // Date d'affiliation
+  email             String?   @unique
+  
+  // Stats actuelles (point de départ)
+  totalBet          Decimal   @default(0) @db.Decimal(10, 2)
+  totalCommission   Decimal   @default(0) @db.Decimal(10, 2)
+  lastTotalCommission Decimal @default(0) @db.Decimal(10, 2) // Pour calculer les différences
+  
+  // Montants
+  pendingAmount     Decimal   @default(0) @db.Decimal(10, 2)
+  paidAmount        Decimal   @default(0) @db.Decimal(10, 2)
+  
+  // Dates
+  lastUpdate        DateTime? // Dernière mise à jour des données
+  lastPaymentDate   DateTime? // Date du dernier paiement
+  
+  confirmationToken String?   @unique
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  commissions Commission[]
+  payments    Payment[]
+  declarations Declaration[]
+
+  @@index([pseudoMasked])
+}
+
+model Commission {
+  id               String    @id @default(cuid())
+  affiliateId      String
+  affiliate        Affiliate @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
+  
+  // Montants
+  totalBet         Decimal   @default(0) @db.Decimal(10, 2)
+  totalCommission  Decimal   @default(0) @db.Decimal(10, 2)
+  difference       Decimal   @default(0) @db.Decimal(10, 2) // Nouvelle - Ancienne
+  affiliateShare   Decimal   @default(0) @db.Decimal(10, 2) // 50% de la différence
+  
+  // Statut
+  isPaid           Boolean   @default(false)
+  paidAt           DateTime?
+  
+  // Période
+  calculatedAt     DateTime  @default(now())
+  
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@index([affiliateId])
+  @@index([isPaid])
+}
+
+model Payment {
+  id          String    @id @default(cuid())
+  affiliateId String
+  affiliate   Affiliate @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
+  
+  amount      Decimal   @db.Decimal(10, 2)
+  crypto      String    @default("USDT") // BTC, ETH, USDT, etc.
+  
+  // Détails de transaction
+  transactionId String?  // ID de transaction unique
+  note          String?  // Note du paiement
+  
+  paidAt      DateTime  @default(now())
+  createdAt   DateTime  @default(now())
+
+  @@index([affiliateId])
+  @@index([paidAt])
+}
+
+model Declaration {
+  id          String    @id @default(cuid())
+  affiliateId String?
+  affiliate   Affiliate? @relation(fields: [affiliateId], references: [id], onDelete: SetNull)
+  
+  // Infos fournies par l'utilisateur
+  declaredPseudo String
+  email          String
+  message        String?
+  screenshot     String?  // URL de la capture d'écran
+  
+  // Statut
+  status         String   @default("pending") // pending, approved, rejected
+  reviewedAt     DateTime?
+  reviewNotes    String?
+  confirmedPseudo String? // Le pseudo confirmé après vérification
+  
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([status])
+  @@index([email])
+}

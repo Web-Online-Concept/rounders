@@ -30,8 +30,13 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# env files - SÉCURITÉ CRITIQUE
+.env
+.env.*
+.env.local
+.env.production
+.env.development
+.env.test
 
 # vercel
 .vercel
@@ -39,3 +44,25 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+Thumbs.db
+
+# Backup files
+*.backup
+*.bak
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/
