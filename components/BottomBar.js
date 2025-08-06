@@ -46,13 +46,10 @@ const BottomBar = () => {
               href={item.href}
               className={`bottom-bar-item ${isActive(item.href) ? 'active' : ''}`}
             >
-              <div className="icon-wrapper">
+              <div className={`button-wrapper ${isActive(item.href) ? 'active' : ''}`}>
                 <span className="icon">{item.icon}</span>
-                {isActive(item.href) && (
-                  <div className="active-indicator" style={{ background: item.gradient }} />
-                )}
+                <span className="label">{item.label}</span>
               </div>
-              <span className="label">{item.label}</span>
             </Link>
           ))}
         </div>
@@ -90,111 +87,68 @@ const BottomBar = () => {
 
         .bottom-bar-item {
           display: flex;
+          align-items: center;
+          justify-content: center;
+          text-decoration: none !important;
+          transition: all 0.3s ease;
+          flex: 1;
+          padding: 5px;
+        }
+
+        .button-wrapper {
+          display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          gap: 2px;
-          text-decoration: none !important;
-          color: white !important;
-          transition: all 0.3s ease;
-          padding: 8px;
+          gap: 4px;
+          padding: 10px 16px;
           border-radius: 12px;
-          position: relative;
-          flex: 1;
-          max-width: 90px;
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          transition: all 0.3s ease;
+          min-width: 70px;
         }
 
-        .bottom-bar-item:hover {
-          text-decoration: none !important;
+        .bottom-bar-item:nth-child(1) .button-wrapper.active,
+        .bottom-bar-item:nth-child(1):hover .button-wrapper {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          border-color: transparent;
         }
 
-        .bottom-bar-item:active {
+        .bottom-bar-item:nth-child(2) .button-wrapper.active,
+        .bottom-bar-item:nth-child(2):hover .button-wrapper {
+          background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+          border-color: transparent;
+        }
+
+        .bottom-bar-item:nth-child(3) .button-wrapper.active,
+        .bottom-bar-item:nth-child(3):hover .button-wrapper {
+          background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+          border-color: transparent;
+        }
+
+        .bottom-bar-item:nth-child(4) .button-wrapper.active,
+        .bottom-bar-item:nth-child(4):hover .button-wrapper {
+          background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+          border-color: transparent;
+        }
+
+        .bottom-bar-item:active .button-wrapper {
           transform: scale(0.95);
         }
 
-        .icon-wrapper {
-          position: relative;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 44px;
-          height: 44px;
-          border-radius: 12px;
-          transition: all 0.3s ease;
-        }
-
-        /* Couleurs pour chaque bouton */
-        .bottom-bar-item:nth-child(1) .icon-wrapper {
-          background: rgba(102, 126, 234, 0.15);
-        }
-
-        .bottom-bar-item:nth-child(1).active .icon-wrapper,
-        .bottom-bar-item:nth-child(1):hover .icon-wrapper {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .bottom-bar-item:nth-child(2) .icon-wrapper {
-          background: rgba(240, 147, 251, 0.15);
-        }
-
-        .bottom-bar-item:nth-child(2).active .icon-wrapper,
-        .bottom-bar-item:nth-child(2):hover .icon-wrapper {
-          background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        }
-
-        .bottom-bar-item:nth-child(3) .icon-wrapper {
-          background: rgba(79, 172, 254, 0.15);
-        }
-
-        .bottom-bar-item:nth-child(3).active .icon-wrapper,
-        .bottom-bar-item:nth-child(3):hover .icon-wrapper {
-          background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-        }
-
-        .bottom-bar-item:nth-child(4) .icon-wrapper {
-          background: rgba(67, 233, 123, 0.15);
-        }
-
-        .bottom-bar-item:nth-child(4).active .icon-wrapper,
-        .bottom-bar-item:nth-child(4):hover .icon-wrapper {
-          background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-        }
-
         .icon {
-          font-size: 24px;
+          font-size: 20px;
           transition: all 0.3s ease;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          filter: none;
-          opacity: 1;
-        }
-
-        .bottom-bar-item.active .icon {
-          transform: scale(1.1);
+          display: block;
         }
 
         .label {
           font-size: 11px;
           font-weight: 600;
-          transition: all 0.3s ease;
-          text-align: center;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          max-width: 100%;
           color: white !important;
           text-decoration: none !important;
-        }
-
-        .bottom-bar-item.active .label {
-          color: white !important;
-          font-weight: 700;
-        }
-
-        /* Enlever l'indicateur du bas */
-        .active-indicator {
-          display: none;
+          white-space: nowrap;
         }
 
         /* Media Query - Visible uniquement sur mobile */
