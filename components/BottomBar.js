@@ -10,19 +10,19 @@ const BottomBar = () => {
     {
       href: '/jouer-sur-stake',
       icon: '🎰',
-      label: t.header?.playOnStake || 'Jouer',
+      label: 'Stake',
       gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
     },
     {
       href: '/affiliation',
       icon: '💰',
-      label: t.header?.affiliation || 'Affiliation',
+      label: 'Affiliation',
       gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
     },
     {
       href: '/commissions',
       icon: '📊',
-      label: t.header?.commissions || 'Commissions',
+      label: 'Commissions',
       gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'
     },
     {
@@ -93,15 +93,15 @@ const BottomBar = () => {
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          gap: 6px;
+          gap: 2px;
           text-decoration: none !important;
           color: white !important;
           transition: all 0.3s ease;
-          padding: 8px 12px;
+          padding: 8px;
           border-radius: 12px;
           position: relative;
           flex: 1;
-          max-width: 80px;
+          max-width: 90px;
         }
 
         .bottom-bar-item:hover {
@@ -117,8 +117,8 @@ const BottomBar = () => {
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 48px;
-          height: 48px;
+          width: 44px;
+          height: 44px;
           border-radius: 12px;
           transition: all 0.3s ease;
         }
@@ -161,9 +161,11 @@ const BottomBar = () => {
         }
 
         .icon {
-          font-size: 26px;
+          font-size: 24px;
           transition: all 0.3s ease;
-          display: block;
+          display: flex;
+          align-items: center;
+          justify-content: center;
           filter: none;
           opacity: 1;
         }
