@@ -68,8 +68,8 @@ export default function JouerSurStake() {
               />
             </div>
 
-            {/* Introduction */}
-            <div className="intro-card" style={{marginBottom: '60px'}}>
+            {/* Introduction - MODIFICATION ICI */}
+            <div className="intro-card intro-mobile-spacing" style={{marginBottom: '60px'}}>
               <p className="lead-text">
                 <strong>{t.playOnStake.intro.title}</strong><br/>
                 {t.playOnStake.intro.description}
@@ -136,8 +136,8 @@ export default function JouerSurStake() {
                 </div>
               </div>
 
-              {/* Étapes d'inscription */}
-              <h3 style={{
+              {/* Étapes d'inscription - MODIFICATION ICI */}
+              <h3 className="steps-title-mobile-spacing" style={{
                 marginTop: '50px', 
                 marginBottom: '40px', 
                 fontSize: '26px', 
@@ -147,7 +147,7 @@ export default function JouerSurStake() {
                 {t.playOnStake.registration.steps.title}
               </h3>
 
-              <div style={{
+              <div className="steps-mobile-spacing" style={{
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
@@ -246,7 +246,7 @@ export default function JouerSurStake() {
                 </div>
               </div>
 
-              <div className="highlight-box" style={{
+              <div className="highlight-box highlight-mobile-spacing" style={{
                 marginTop: '50px',
                 padding: '30px',
                 background: 'white',
@@ -265,7 +265,7 @@ export default function JouerSurStake() {
                 </ul>
               </div>
 
-              <div className="cta-box" style={{
+              <div className="cta-box cta-mobile-spacing" style={{
                 marginTop: '50px',
                 padding: '40px',
                 background: 'linear-gradient(135deg, #1a2c38 0%, #2d4356 100%)',
@@ -717,8 +717,8 @@ export default function JouerSurStake() {
                 </div>
               </div>
 
-              {/* Features additionnelles */}
-              <div className="security-grid" style={{marginTop: '60px', gap: '25px'}}>
+              {/* Features additionnelles - MODIFICATION ICI */}
+              <div className="security-grid security-grid-mobile-spacing" style={{marginTop: '60px', gap: '25px'}}>
                 <div className="security-item" style={{padding: '30px'}}>
                   <span className="security-icon">💳</span>
                   <h3 style={{marginBottom: '15px'}}>{t.playOnStake.platform.features.currencies.title}</h3>
@@ -762,8 +762,8 @@ export default function JouerSurStake() {
             </div>
           </div>
         </section>
-
-        {/* SECTION 3 : AVANTAGES */}
+		
+{/* SECTION 3 : AVANTAGES */}
         <section className="section-wrapper" style={{
           background: 'linear-gradient(135deg, #e3f2fd 0%, #f3f9ff 100%)',
           position: 'relative',
@@ -916,7 +916,7 @@ export default function JouerSurStake() {
                 </div>
               </div>
 
-              <div className="pro-tip" style={{
+              <div className="pro-tip pro-tip-mobile-spacing" style={{
                 marginTop: '50px',
                 padding: '30px',
                 background: 'white',
@@ -933,8 +933,8 @@ export default function JouerSurStake() {
               </div>
             </div>
 
-            {/* Section Bonus */}
-            <div className="content-section" style={{marginTop: '60px', marginBottom: 0}}>
+            {/* Section Bonus - MODIFICATION ICI */}
+            <div className="content-section bonus-section-mobile-spacing" style={{marginTop: '60px', marginBottom: 0}}>
               <h2 style={{fontSize: '28px', marginBottom: '40px', textAlign: 'center'}}>
                 {t.playOnStake.bonuses.title}
               </h2>
