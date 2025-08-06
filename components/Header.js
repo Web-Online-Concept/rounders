@@ -290,7 +290,7 @@ const Header = () => {
           padding: 20px;
         }
 
-        /* Beaux boutons pour mobile */
+        /* Beaux boutons pour mobile - CORRIGÉS */
         .mobile-menu-button {
           display: flex;
           align-items: center;
@@ -298,19 +298,19 @@ const Header = () => {
           width: 100%;
           padding: 20px;
           margin-bottom: 15px;
-          background: linear-gradient(135deg, #1a2c38 0%, #2d4356 100%);
-          border: 1px solid rgba(74, 158, 255, 0.2);
+          background: rgba(255, 255, 255, 0.08);
+          border: 2px solid rgba(74, 158, 255, 0.3);
           border-radius: 15px;
           text-decoration: none;
           transition: all 0.3s ease;
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+          position: relative;
+          overflow: hidden;
         }
 
         .mobile-menu-button:hover {
-          background: linear-gradient(135deg, #213343 0%, #344960 100%);
-          border-color: rgba(74, 158, 255, 0.4);
-          transform: translateY(-2px);
-          box-shadow: 0 6px 20px rgba(74, 158, 255, 0.3);
+          background: rgba(255, 255, 255, 0.12);
+          border-color: rgba(74, 158, 255, 0.5);
+          transform: translateX(5px);
         }
 
         .button-icon {
@@ -332,7 +332,7 @@ const Header = () => {
         }
 
         .button-subtitle {
-          color: #94a3b8;
+          color: rgba(255, 255, 255, 0.7);
           font-size: 14px;
         }
 
@@ -344,6 +344,7 @@ const Header = () => {
 
         .mobile-menu-button:hover .button-arrow {
           transform: translateX(5px);
+          color: #00d632;
         }
 
         /* Section langue mobile */
