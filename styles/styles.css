@@ -1553,6 +1553,27 @@ body {
     margin-top: 30px !important; 
   }
   
+  /* À ajouter dans votre section @media (max-width: 768px) */
+
+/* Correction de l'espace entre guide-content et section-wrapper */
+.guide-content {
+  padding-bottom: 20px !important; /* au lieu de 60px */
+}
+
+.guide-content .content-section {
+  margin-bottom: 40px !important; /* au lieu de 80px */
+}
+
+/* Réduction du padding top de la première section après le hero */
+.guide-content + .section-wrapper {
+  padding-top: 40px !important; /* au lieu de 80px */
+}
+
+/* Si c'est toujours trop, on peut aussi cibler spécifiquement */
+.affiliation-page .section-wrapper:first-of-type {
+  padding-top: 40px !important;
+}
+  
   /* ===============================================
    PAGES LÉGALES
    =============================================== */
