@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import fr from '../locales/fr';
 import en from '../locales/en';
 import es from '../locales/es';
@@ -12,34 +12,17 @@ const translations = {
 };
 
 export function useTranslation() {
-  // Anglais par défaut
-  const [locale, setLocale] = useState('en');
-
-  useEffect(() => {
-    // Récupérer la langue sauvegardée ou utiliser l'anglais par défaut
-    const savedLocale = localStorage.getItem('locale');
-    if (savedLocale && translations[savedLocale]) {
-      setLocale(savedLocale);
-    } else {
-      // Détecter la langue du navigateur
-      const browserLang = navigator.language.split('-')[0];
-      if (translations[browserLang]) {
-        setLocale(browserLang);
-      }
-    }
-  }, []);
+  const router = useRouter();
+  const { locale } = router;
 
   const changeLanguage = (newLocale) => {
     if (translations[newLocale]) {
-      setLocale(newLocale);
-      localStorage.setItem('locale', newLocale);
-      
-      // Recharger la page pour appliquer les changements
-      window.location.reload();
+      // Utilise le système de routing de Next.js pour changer la langue
+      router.push(router.pathname, router.asPath, { locale: newLocale });
     }
   };
 
-  const t = translations[locale] || translations.en;
+  const t = translations[locale] || translations.fr;
 
   return {
     t,
