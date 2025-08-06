@@ -289,12 +289,31 @@ const Header = () => {
           transition: all 0.3s ease;
           text-decoration: none !important;
           width: 100%;
+          appearance: none;
+          background-color: transparent;
         }
 
         .mobile-menu-item:hover {
           background: rgba(255, 255, 255, 0.1);
           border-color: rgba(255, 255, 255, 0.2);
           color: white !important;
+          text-decoration: none !important;
+        }
+
+        .mobile-menu-item:visited {
+          color: white !important;
+          text-decoration: none !important;
+        }
+
+        .mobile-menu-item:active {
+          color: white !important;
+          text-decoration: none !important;
+        }
+
+        .mobile-menu-item:focus {
+          color: white !important;
+          text-decoration: none !important;
+          outline: none;
         }
 
         .menu-icon {
