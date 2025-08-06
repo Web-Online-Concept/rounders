@@ -211,10 +211,12 @@ const Header = () => {
             }}
           >
             <span className="button-emoji">📝</span>
-            <span>{locale === 'en' ? 'Validate' : 
-                   locale === 'es' ? 'Validar' : 
-                   locale === 'ru' ? 'Проверить' : 
-                   'Valider'}</span>
+            <span>
+              {locale === 'en' && 'Validate'}
+              {locale === 'es' && 'Validar'}
+              {locale === 'ru' && 'Проверить'}
+              {locale === 'fr' && 'Valider'}
+            </span>
           </button>
 
           <button 
