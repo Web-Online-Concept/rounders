@@ -178,21 +178,39 @@ const Header = () => {
       {/* Menu mobile UNIQUEMENT */}
       <div className={`mobile-menu ${showMobileMenu ? 'open' : ''}`}>
         <nav className="mobile-nav">
-          {/* Liens simples comme les boutons de langue */}
-          <Link href="/jouer-sur-stake" className="mobile-menu-item" onClick={() => setShowMobileMenu(false)}>
-            <span className="menu-icon">🎰</span>
+          {/* Boutons comme les langues */}
+          <button 
+            className="mobile-nav-button"
+            onClick={() => {
+              window.location.href = '/jouer-sur-stake';
+              setShowMobileMenu(false);
+            }}
+          >
+            <span className="button-emoji">🎰</span>
             <span>{t.header.playOnStake || "Jouer sur Stake"}</span>
-          </Link>
+          </button>
 
-          <Link href="/affiliation" className="mobile-menu-item" onClick={() => setShowMobileMenu(false)}>
-            <span className="menu-icon">💰</span>
+          <button 
+            className="mobile-nav-button"
+            onClick={() => {
+              window.location.href = '/affiliation';
+              setShowMobileMenu(false);
+            }}
+          >
+            <span className="button-emoji">💰</span>
             <span>{t.header.affiliation}</span>
-          </Link>
+          </button>
 
-          <Link href="/commissions" className="mobile-menu-item" onClick={() => setShowMobileMenu(false)}>
-            <span className="menu-icon">📊</span>
+          <button 
+            className="mobile-nav-button"
+            onClick={() => {
+              window.location.href = '/commissions';
+              setShowMobileMenu(false);
+            }}
+          >
+            <span className="button-emoji">📊</span>
             <span>{t.header.commissions}</span>
-          </Link>
+          </button>
           
           {/* Sélecteur de langue mobile */}
           <div className="mobile-language-selector">
@@ -272,55 +290,34 @@ const Header = () => {
           padding: 20px;
         }
 
-        /* Liens mobiles simples comme les langues */
-        .mobile-menu-item {
+        /* Boutons de navigation mobile */
+        .mobile-nav-button {
           display: flex;
           align-items: center;
           gap: 12px;
+          width: 100%;
           padding: 15px;
           margin-bottom: 10px;
           background: rgba(255, 255, 255, 0.05);
           border: 1px solid rgba(255, 255, 255, 0.1);
           border-radius: 10px;
-          color: white !important;
+          color: white;
           font-size: 16px;
           font-weight: 500;
           cursor: pointer;
           transition: all 0.3s ease;
-          text-decoration: none !important;
-          width: 100%;
-          appearance: none;
-          background-color: transparent;
+          text-align: left;
         }
 
-        .mobile-menu-item:hover {
+        .mobile-nav-button:hover {
           background: rgba(255, 255, 255, 0.1);
           border-color: rgba(255, 255, 255, 0.2);
-          color: white !important;
-          text-decoration: none !important;
         }
 
-        .mobile-menu-item:visited {
-          color: white !important;
-          text-decoration: none !important;
-        }
-
-        .mobile-menu-item:active {
-          color: white !important;
-          text-decoration: none !important;
-        }
-
-        .mobile-menu-item:focus {
-          color: white !important;
-          text-decoration: none !important;
-          outline: none;
-        }
-
-        .menu-icon {
+        .button-emoji {
           font-size: 20px;
           width: 30px;
           text-align: center;
-          display: inline-block;
         }
 
         /* Section langue mobile */
