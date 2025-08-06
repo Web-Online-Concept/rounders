@@ -83,6 +83,17 @@ const Header = () => {
     <>
       <header className="header">
         <div className="header-container">
+          {/* Bouton hamburger mobile à gauche */}
+          <button 
+            className="mobile-menu-toggle"
+            onClick={() => setShowMobileMenu(!showMobileMenu)}
+            aria-label="Toggle menu"
+          >
+            <span className={`hamburger-line ${showMobileMenu ? 'open' : ''}`}></span>
+            <span className={`hamburger-line ${showMobileMenu ? 'open' : ''}`}></span>
+            <span className={`hamburger-line ${showMobileMenu ? 'open' : ''}`}></span>
+          </button>
+
           <Link href="/" className="logo">
             <Image
               src="/images/logo.png"
@@ -178,19 +189,32 @@ const Header = () => {
       {/* Menu mobile */}
       <div className={`mobile-menu ${showMobileMenu ? 'open' : ''}`}>
         <nav className="mobile-nav">
-          <Link href="/jouer-sur-stake" onClick={() => setShowMobileMenu(false)}>
-            {t.header.playOnStake || "Jouer sur Stake"}
+          {/* Liens principaux avec icônes */}
+          <Link href="/jouer-sur-stake" className="mobile-nav-link" onClick={() => setShowMobileMenu(false)}>
+            <span className="nav-icon">🎰</span>
+            <span>{t.header.playOnStake || "Jouer sur Stake"}</span>
+            <svg className="nav-arrow" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" />
+            </svg>
           </Link>
-          <Link href="/affiliation" onClick={() => setShowMobileMenu(false)}>
-            {t.header.affiliation}
+          <Link href="/affiliation" className="mobile-nav-link" onClick={() => setShowMobileMenu(false)}>
+            <span className="nav-icon">💰</span>
+            <span>{t.header.affiliation}</span>
+            <svg className="nav-arrow" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" />
+            </svg>
           </Link>
-          <Link href="/commissions" onClick={() => setShowMobileMenu(false)}>
-            {t.header.commissions}
+          <Link href="/commissions" className="mobile-nav-link" onClick={() => setShowMobileMenu(false)}>
+            <span className="nav-icon">📊</span>
+            <span>{t.header.commissions}</span>
+            <svg className="nav-arrow" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" />
+            </svg>
           </Link>
           
           {/* Sélecteur de langue mobile */}
           <div className="mobile-language-selector">
-            <h3>{currentLanguage.name}</h3>
+            <h3>LANGAGE</h3>
             <div className="mobile-language-options">
               {languages.map((lang) => (
                 <button
@@ -224,7 +248,8 @@ const Header = () => {
           border: none;
           cursor: pointer;
           padding: 10px;
-          margin-right: -10px;
+          margin-left: -10px;
+          margin-right: 15px;
         }
 
         .hamburger-line {
@@ -257,7 +282,7 @@ const Header = () => {
           right: 0;
           bottom: 0;
           background: #1a2c38;
-          transform: translateX(100%);
+          transform: translateX(-100%);
           transition: transform 0.3s ease;
           z-index: 999;
           overflow-y: auto;
@@ -268,24 +293,46 @@ const Header = () => {
         }
 
         .mobile-nav {
-          padding: 30px 20px;
+          padding: 20px;
         }
 
-        .mobile-nav a {
-          display: block;
+        .mobile-nav-link {
+          display: flex;
+          align-items: center;
+          gap: 15px;
           color: white;
           text-decoration: none;
-          font-size: 20px;
+          font-size: 18px;
           font-weight: 600;
           padding: 20px;
-          margin: 0 -20px;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+          margin: 0 -20px 10px -20px;
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 12px;
           transition: all 0.3s ease;
         }
 
-        .mobile-nav a:hover {
-          background: rgba(255, 255, 255, 0.05);
-          padding-left: 30px;
+        .mobile-nav-link:hover {
+          background: rgba(255, 255, 255, 0.1);
+          border-color: rgba(255, 255, 255, 0.2);
+          transform: translateX(5px);
+        }
+
+        .nav-icon {
+          font-size: 24px;
+          width: 40px;
+          text-align: center;
+        }
+
+        .nav-arrow {
+          margin-left: auto;
+          opacity: 0.5;
+          transition: all 0.3s ease;
+        }
+
+        .mobile-nav-link:hover .nav-arrow {
+          opacity: 1;
+          transform: translateX(3px);
         }
 
         /* Sélecteur de langue mobile */
@@ -296,11 +343,12 @@ const Header = () => {
         }
 
         .mobile-language-selector h3 {
-          color: rgba(255, 255, 255, 0.6);
-          font-size: 14px;
-          text-transform: uppercase;
-          letter-spacing: 1px;
+          color: white;
+          font-size: 16px;
+          text-align: center;
+          letter-spacing: 2px;
           margin-bottom: 20px;
+          font-weight: 700;
         }
 
         .mobile-language-options {
