@@ -211,7 +211,10 @@ const Header = () => {
             }}
           >
             <span className="button-emoji">📝</span>
-            <span>{t.footer?.sitemap?.validateAffiliation || "Valider son affiliation"}</span>
+            <span>{locale === 'en' ? 'Validate' : 
+                   locale === 'es' ? 'Validar' : 
+                   locale === 'ru' ? 'Проверить' : 
+                   'Valider'}</span>
           </button>
 
           <button 
