@@ -38,7 +38,7 @@ const Footer = () => {
           </div>
 
           {/* Colonne 2 - Rounders.pro */}
-          <div className="footer-column">
+          <div className="footer-column footer-sitemap">
             <h4 className="footer-subtitle">{t.footer.sitemap.title}</h4>
             <ul className="footer-links">
               <li><Link href="/jouer-sur-stake">{t.footer.sitemap.playOnStake}</Link></li>
@@ -49,7 +49,7 @@ const Footer = () => {
           </div>
 
           {/* Colonne 3 - Légal */}
-          <div className="footer-column">
+          <div className="footer-column footer-legal">
             <h4 className="footer-subtitle">{t.footer.legal.title}</h4>
             <ul className="footer-links">
               <li><Link href="/conditions-utilisation">{t.footer.legal.terms}</Link></li>
@@ -60,7 +60,7 @@ const Footer = () => {
           </div>
 
           {/* Colonne 4 - Contact */}
-          <div className="footer-column">
+          <div className="footer-column footer-contact">
             <h4 className="footer-subtitle">{t.footer.contact.title}</h4>
             <div style={{
               display: 'flex',
@@ -163,6 +163,85 @@ const Footer = () => {
           </p>
         </div>
       </div>
+
+      <style jsx>{`
+        /* Styles mobile uniquement */
+        @media (max-width: 768px) {
+          .footer-content {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+          }
+
+          /* Section "À propos" reste en pleine largeur */
+          .footer-column:first-child {
+            width: 100%;
+            margin-bottom: 20px;
+          }
+
+          /* Wrapper pour Rounders.pro et Légal */
+          .footer-sitemap,
+          .footer-legal {
+            width: 48%;
+          }
+
+          /* Grille 2 colonnes pour Rounders.pro et Légal */
+          .footer-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+          }
+
+          .footer-content > :nth-child(2),
+          .footer-content > :nth-child(3) {
+            display: inline-block;
+          }
+
+          .footer-content > :nth-child(n+2):nth-child(-n+3) {
+            width: calc(50% - 15px);
+            display: inline-block;
+            vertical-align: top;
+          }
+
+          .footer-content > :nth-child(3) {
+            margin-left: 30px;
+          }
+
+          /* Contact centré en dessous */
+          .footer-contact {
+            width: 100% !important;
+            text-align: center;
+            margin-top: 20px;
+          }
+
+          .footer-contact .footer-subtitle {
+            text-align: center;
+          }
+
+          .footer-contact > div:first-of-type {
+            justify-content: center;
+          }
+
+          .footer-contact .footer-stake-link {
+            display: flex;
+            justify-content: center;
+          }
+
+          /* Ajustements pour les titres et liens */
+          .footer-subtitle {
+            font-size: 16px;
+            margin-bottom: 12px;
+          }
+
+          .footer-links {
+            font-size: 14px;
+          }
+
+          .footer-links li {
+            margin-bottom: 8px;
+          }
+        }
+      `}</style>
     </footer>
   );
 };
