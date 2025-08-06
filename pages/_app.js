@@ -1,6 +1,7 @@
 import '../styles/styles.css'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import BottomBar from '../components/BottomBar'
 import { useRouter } from 'next/router'
 
 export default function MyApp({ Component, pageProps }) {
@@ -15,6 +16,7 @@ export default function MyApp({ Component, pageProps }) {
       <Header />
       <Component {...pageProps} />
       <Footer />
+      <BottomBar />
     </>
   )
 }
