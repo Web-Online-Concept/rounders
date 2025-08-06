@@ -168,50 +168,33 @@ const Footer = () => {
         /* Styles mobile uniquement */
         @media (max-width: 768px) {
           .footer-content {
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
+            display: block;
           }
 
-          /* Section "À propos" reste en pleine largeur */
+          /* Section "À propos" en pleine largeur */
           .footer-column:first-child {
             width: 100%;
-            margin-bottom: 20px;
+            margin-bottom: 40px;
           }
 
-          /* Wrapper pour Rounders.pro et Légal */
+          /* Container pour les 2 colonnes */
           .footer-sitemap,
           .footer-legal {
+            display: inline-block;
             width: 48%;
-          }
-
-          /* Grille 2 colonnes pour Rounders.pro et Légal */
-          .footer-content {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 30px;
-          }
-
-          .footer-content > :nth-child(2),
-          .footer-content > :nth-child(3) {
-            display: inline-block;
-          }
-
-          .footer-content > :nth-child(n+2):nth-child(-n+3) {
-            width: calc(50% - 15px);
-            display: inline-block;
             vertical-align: top;
           }
 
-          .footer-content > :nth-child(3) {
-            margin-left: 30px;
+          .footer-legal {
+            margin-left: 4%;
           }
 
-          /* Contact centré en dessous */
+          /* Contact centré en pleine largeur */
           .footer-contact {
-            width: 100% !important;
+            display: block;
+            width: 100%;
             text-align: center;
-            margin-top: 20px;
+            margin-top: 40px;
           }
 
           .footer-contact .footer-subtitle {
@@ -227,7 +210,12 @@ const Footer = () => {
             justify-content: center;
           }
 
-          /* Ajustements pour les titres et liens */
+          /* Ajustements typographiques */
+          .footer-title {
+            font-size: 18px;
+            margin-bottom: 12px;
+          }
+
           .footer-subtitle {
             font-size: 16px;
             margin-bottom: 12px;
@@ -239,6 +227,11 @@ const Footer = () => {
 
           .footer-links li {
             margin-bottom: 8px;
+          }
+
+          .footer-description {
+            font-size: 14px;
+            line-height: 1.6;
           }
         }
       `}</style>
