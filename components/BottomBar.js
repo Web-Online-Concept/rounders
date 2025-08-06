@@ -16,19 +16,19 @@ const BottomBar = () => {
     {
       href: '/affiliation',
       icon: '💰',
-      label: 'Affiliation',
+      label: t.header?.affiliation || 'Affiliation',
       gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
     },
     {
       href: '/commissions',
       icon: '📊',
-      label: 'Commissions',
+      label: t.header?.commissions || 'Commissions',
       gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'
     },
     {
       href: '/declaration',
       icon: '📝',
-      label: 'Déclaration',
+      label: t.footer?.sitemap?.validateAffiliation || 'Déclaration',
       gradient: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'
     }
   ];
@@ -100,37 +100,29 @@ const BottomBar = () => {
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          gap: 4px;
+          gap: 2px;
           padding: 10px 16px;
           border-radius: 12px;
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          background: transparent;
+          border: 1px solid transparent;
           transition: all 0.3s ease;
           min-width: 70px;
         }
 
-        .bottom-bar-item:nth-child(1) .button-wrapper.active,
-        .bottom-bar-item:nth-child(1):hover .button-wrapper {
+        .bottom-bar-item:nth-child(1) .button-wrapper.active {
           background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          border-color: transparent;
         }
 
-        .bottom-bar-item:nth-child(2) .button-wrapper.active,
-        .bottom-bar-item:nth-child(2):hover .button-wrapper {
+        .bottom-bar-item:nth-child(2) .button-wrapper.active {
           background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-          border-color: transparent;
         }
 
-        .bottom-bar-item:nth-child(3) .button-wrapper.active,
-        .bottom-bar-item:nth-child(3):hover .button-wrapper {
+        .bottom-bar-item:nth-child(3) .button-wrapper.active {
           background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-          border-color: transparent;
         }
 
-        .bottom-bar-item:nth-child(4) .button-wrapper.active,
-        .bottom-bar-item:nth-child(4):hover .button-wrapper {
+        .bottom-bar-item:nth-child(4) .button-wrapper.active {
           background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-          border-color: transparent;
         }
 
         .bottom-bar-item:active .button-wrapper {
