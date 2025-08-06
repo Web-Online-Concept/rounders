@@ -71,9 +71,8 @@ const BottomBar = () => {
           bottom: 0;
           left: 0;
           right: 0;
-          background: rgba(15, 25, 35, 0.98);
-          backdrop-filter: blur(20px);
-          -webkit-backdrop-filter: blur(20px);
+          background: rgba(5, 15, 25, 0.95);
+          backdrop-filter: blur(10px);
           border-top: 1px solid rgba(255, 255, 255, 0.1);
           z-index: 998;
           box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.3);
@@ -83,10 +82,10 @@ const BottomBar = () => {
           display: flex;
           justify-content: space-around;
           align-items: center;
-          height: 65px;
+          height: 70px;
           max-width: 100%;
           margin: 0 auto;
-          padding: 0 10px;
+          padding: 0 20px;
         }
 
         .bottom-bar-item {
@@ -94,15 +93,19 @@ const BottomBar = () => {
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          gap: 4px;
-          text-decoration: none;
-          color: #94a3b8;
+          gap: 6px;
+          text-decoration: none !important;
+          color: white !important;
           transition: all 0.3s ease;
           padding: 8px 12px;
           border-radius: 12px;
           position: relative;
           flex: 1;
           max-width: 80px;
+        }
+
+        .bottom-bar-item:hover {
+          text-decoration: none !important;
         }
 
         .bottom-bar-item:active {
@@ -114,87 +117,82 @@ const BottomBar = () => {
           display: flex;
           align-items: center;
           justify-content: center;
+          width: 48px;
+          height: 48px;
+          border-radius: 12px;
+          transition: all 0.3s ease;
+        }
+
+        /* Couleurs pour chaque bouton */
+        .bottom-bar-item:nth-child(1) .icon-wrapper {
+          background: rgba(102, 126, 234, 0.15);
+        }
+
+        .bottom-bar-item:nth-child(1).active .icon-wrapper,
+        .bottom-bar-item:nth-child(1):hover .icon-wrapper {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .bottom-bar-item:nth-child(2) .icon-wrapper {
+          background: rgba(240, 147, 251, 0.15);
+        }
+
+        .bottom-bar-item:nth-child(2).active .icon-wrapper,
+        .bottom-bar-item:nth-child(2):hover .icon-wrapper {
+          background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .bottom-bar-item:nth-child(3) .icon-wrapper {
+          background: rgba(79, 172, 254, 0.15);
+        }
+
+        .bottom-bar-item:nth-child(3).active .icon-wrapper,
+        .bottom-bar-item:nth-child(3):hover .icon-wrapper {
+          background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .bottom-bar-item:nth-child(4) .icon-wrapper {
+          background: rgba(67, 233, 123, 0.15);
+        }
+
+        .bottom-bar-item:nth-child(4).active .icon-wrapper,
+        .bottom-bar-item:nth-child(4):hover .icon-wrapper {
+          background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
         }
 
         .icon {
-          font-size: 24px;
+          font-size: 26px;
           transition: all 0.3s ease;
           display: block;
-          filter: grayscale(100%);
-          opacity: 0.7;
+          filter: none;
+          opacity: 1;
         }
 
         .bottom-bar-item.active .icon {
-          filter: grayscale(0%);
-          opacity: 1;
-          transform: translateY(-2px);
-        }
-
-        .bottom-bar-item:hover .icon {
-          filter: grayscale(0%);
-          opacity: 0.9;
+          transform: scale(1.1);
         }
 
         .label {
           font-size: 11px;
-          font-weight: 500;
+          font-weight: 600;
           transition: all 0.3s ease;
           text-align: center;
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
           max-width: 100%;
+          color: white !important;
+          text-decoration: none !important;
         }
 
         .bottom-bar-item.active .label {
-          color: #ffffff;
-          font-weight: 600;
+          color: white !important;
+          font-weight: 700;
         }
 
-        .bottom-bar-item:hover .label {
-          color: #e2e8f0;
-        }
-
-        /* Indicateur actif avec gradient */
+        /* Enlever l'indicateur du bas */
         .active-indicator {
-          position: absolute;
-          bottom: -8px;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 32px;
-          height: 3px;
-          border-radius: 3px 3px 0 0;
-          animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-          from {
-            width: 0;
-            opacity: 0;
-          }
-          to {
-            width: 32px;
-            opacity: 1;
-          }
-        }
-
-        /* Effet de ripple au tap */
-        .bottom-bar-item::before {
-          content: '';
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          width: 0;
-          height: 0;
-          border-radius: 50%;
-          background: rgba(255, 255, 255, 0.1);
-          transform: translate(-50%, -50%);
-          transition: width 0.6s, height 0.6s;
-        }
-
-        .bottom-bar-item:active::before {
-          width: 100px;
-          height: 100px;
+          display: none;
         }
 
         /* Media Query - Visible uniquement sur mobile */
