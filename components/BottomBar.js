@@ -20,16 +20,16 @@ const BottomBar = () => {
       gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
     },
     {
+      href: '/declaration',
+      icon: '📝',
+      label: t.footer?.sitemap?.validate || 'Valider',
+      gradient: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'
+    },
+    {
       href: '/commissions',
       icon: '📊',
       label: t.header?.commissions || 'Commissions',
       gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'
-    },
-    {
-      href: '/declaration',
-      icon: '📝',
-      label: t.footer?.sitemap?.validateAffiliation || 'Déclaration',
-      gradient: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'
     }
   ];
 
@@ -118,11 +118,11 @@ const BottomBar = () => {
         }
 
         .bottom-bar-item:nth-child(3) .button-wrapper.active {
-          background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+          background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
         }
 
         .bottom-bar-item:nth-child(4) .button-wrapper.active {
-          background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+          background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
         }
 
         .bottom-bar-item:active .button-wrapper {
