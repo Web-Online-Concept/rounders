@@ -83,7 +83,7 @@ const Header = () => {
     <>
       <header className="header">
         <div className="header-container">
-          {/* Bouton hamburger mobile à gauche */}
+          {/* Bouton hamburger mobile SEULEMENT */}
           <button 
             className="mobile-menu-toggle"
             onClick={() => setShowMobileMenu(!showMobileMenu)}
@@ -117,8 +117,8 @@ const Header = () => {
             </span>
           </Link>
           
-          {/* Navigation Desktop */}
-          <nav className="nav desktop-nav">
+          {/* Navigation Desktop INTACTE */}
+          <nav className="nav">
             <Link href="/jouer-sur-stake">
               {t.header.playOnStake || "Jouer sur Stake"}
             </Link>
@@ -129,7 +129,7 @@ const Header = () => {
               {t.header.commissions}
             </Link>
             
-            {/* Sélecteur de langue desktop */}
+            {/* Sélecteur de langue desktop INTACT */}
             <div className="language-selector-dropdown" ref={dropdownRef}>
               <button 
                 className="language-current"
@@ -172,43 +172,43 @@ const Header = () => {
               )}
             </div>
           </nav>
-
-          {/* Bouton hamburger mobile */}
-          <button 
-            className="mobile-menu-toggle"
-            onClick={() => setShowMobileMenu(!showMobileMenu)}
-            aria-label="Toggle menu"
-          >
-            <span className={`hamburger-line ${showMobileMenu ? 'open' : ''}`}></span>
-            <span className={`hamburger-line ${showMobileMenu ? 'open' : ''}`}></span>
-            <span className={`hamburger-line ${showMobileMenu ? 'open' : ''}`}></span>
-          </button>
         </div>
       </header>
 
-      {/* Menu mobile */}
+      {/* Menu mobile UNIQUEMENT */}
       <div className={`mobile-menu ${showMobileMenu ? 'open' : ''}`}>
         <nav className="mobile-nav">
-          {/* Liens principaux avec icônes */}
-          <Link href="/jouer-sur-stake" className="mobile-nav-link" onClick={() => setShowMobileMenu(false)}>
-            <span className="nav-icon">🎰</span>
-            <span>{t.header.playOnStake || "Jouer sur Stake"}</span>
-            <svg className="nav-arrow" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-              <path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" />
+          {/* Beaux boutons pour les liens */}
+          <Link href="/jouer-sur-stake" className="mobile-menu-button" onClick={() => setShowMobileMenu(false)}>
+            <div className="button-icon">🎰</div>
+            <div className="button-content">
+              <div className="button-title">{t.header.playOnStake || "Jouer sur Stake"}</div>
+              <div className="button-subtitle">{t.header.menu?.inscription || "Inscription, Bonus & Guide"}</div>
+            </div>
+            <svg className="button-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </Link>
-          <Link href="/affiliation" className="mobile-nav-link" onClick={() => setShowMobileMenu(false)}>
-            <span className="nav-icon">💰</span>
-            <span>{t.header.affiliation}</span>
-            <svg className="nav-arrow" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-              <path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" />
+
+          <Link href="/affiliation" className="mobile-menu-button" onClick={() => setShowMobileMenu(false)}>
+            <div className="button-icon">💰</div>
+            <div className="button-content">
+              <div className="button-title">{t.header.affiliation}</div>
+              <div className="button-subtitle">50% de nos commissions</div>
+            </div>
+            <svg className="button-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </Link>
-          <Link href="/commissions" className="mobile-nav-link" onClick={() => setShowMobileMenu(false)}>
-            <span className="nav-icon">📊</span>
-            <span>{t.header.commissions}</span>
-            <svg className="nav-arrow" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-              <path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" />
+
+          <Link href="/commissions" className="mobile-menu-button" onClick={() => setShowMobileMenu(false)}>
+            <div className="button-icon">📊</div>
+            <div className="button-content">
+              <div className="button-title">{t.header.commissions}</div>
+              <div className="button-subtitle">Suivi & paiements</div>
+            </div>
+            <svg className="button-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </Link>
           
@@ -235,13 +235,7 @@ const Header = () => {
       </div>
 
       <style jsx>{`
-        /* Desktop styles (existants) */
-        .desktop-nav {
-          display: flex;
-          align-items: center;
-          gap: 30px;
-        }
-
+        /* Menu hamburger - visible uniquement sur mobile */
         .mobile-menu-toggle {
           display: none;
           background: none;
@@ -281,7 +275,7 @@ const Header = () => {
           left: 0;
           right: 0;
           bottom: 0;
-          background: #1a2c38;
+          background: #0f1923;
           transform: translateX(-100%);
           transition: transform 0.3s ease;
           z-index: 999;
@@ -296,46 +290,63 @@ const Header = () => {
           padding: 20px;
         }
 
-        .mobile-nav-link {
+        /* Beaux boutons pour mobile */
+        .mobile-menu-button {
           display: flex;
           align-items: center;
           gap: 15px;
-          color: white;
-          text-decoration: none;
-          font-size: 18px;
-          font-weight: 600;
+          width: 100%;
           padding: 20px;
-          margin: 0 -20px 10px -20px;
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          border-radius: 12px;
+          margin-bottom: 15px;
+          background: linear-gradient(135deg, #1a2c38 0%, #2d4356 100%);
+          border: 1px solid rgba(74, 158, 255, 0.2);
+          border-radius: 15px;
+          text-decoration: none;
           transition: all 0.3s ease;
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
-        .mobile-nav-link:hover {
-          background: rgba(255, 255, 255, 0.1);
-          border-color: rgba(255, 255, 255, 0.2);
+        .mobile-menu-button:hover {
+          background: linear-gradient(135deg, #213343 0%, #344960 100%);
+          border-color: rgba(74, 158, 255, 0.4);
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(74, 158, 255, 0.3);
+        }
+
+        .button-icon {
+          font-size: 32px;
+          width: 50px;
+          text-align: center;
+          flex-shrink: 0;
+        }
+
+        .button-content {
+          flex: 1;
+        }
+
+        .button-title {
+          color: white;
+          font-size: 18px;
+          font-weight: 700;
+          margin-bottom: 4px;
+        }
+
+        .button-subtitle {
+          color: #94a3b8;
+          font-size: 14px;
+        }
+
+        .button-arrow {
+          color: #4a9eff;
+          flex-shrink: 0;
+          transition: transform 0.3s ease;
+        }
+
+        .mobile-menu-button:hover .button-arrow {
           transform: translateX(5px);
         }
 
-        .nav-icon {
-          font-size: 24px;
-          width: 40px;
-          text-align: center;
-        }
-
-        .nav-arrow {
-          margin-left: auto;
-          opacity: 0.5;
-          transition: all 0.3s ease;
-        }
-
-        .mobile-nav-link:hover .nav-arrow {
-          opacity: 1;
-          transform: translateX(3px);
-        }
-
-        /* Sélecteur de langue mobile */
+        /* Section langue mobile */
         .mobile-language-selector {
           margin-top: 40px;
           padding-top: 40px;
@@ -388,8 +399,16 @@ const Header = () => {
           height: 20px;
         }
 
-        /* Responsive */
+        /* Media Query - Active le menu mobile SEULEMENT sur mobile */
         @media (max-width: 768px) {
+          .mobile-menu-toggle {
+            display: block;
+          }
+
+          .nav {
+            display: none;
+          }
+
           .header-container {
             padding: 15px 20px;
           }
@@ -407,17 +426,9 @@ const Header = () => {
             width: 20px !important;
             height: 20px !important;
           }
-
-          .desktop-nav {
-            display: none;
-          }
-
-          .mobile-menu-toggle {
-            display: block;
-          }
         }
 
-        /* Ajustements pour le reste du style existant */
+        /* Styles existants pour desktop - NE PAS TOUCHER */
         .language-selector-dropdown {
           position: relative;
           margin-left: 20px;
