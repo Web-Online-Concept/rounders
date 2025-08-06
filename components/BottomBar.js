@@ -4,7 +4,7 @@ import { useTranslation } from "../hooks/useTranslation";
 
 const BottomBar = () => {
   const router = useRouter();
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   
   const navItems = [
     {
@@ -22,7 +22,10 @@ const BottomBar = () => {
     {
       href: '/declaration',
       icon: '📝',
-      label: t.footer?.sitemap?.validate || 'Valider',
+      label: locale === 'en' ? 'Validate' : 
+             locale === 'es' ? 'Validar' : 
+             locale === 'ru' ? 'Проверить' : 
+             'Valider',
       gradient: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'
     },
     {
