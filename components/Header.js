@@ -178,38 +178,20 @@ const Header = () => {
       {/* Menu mobile UNIQUEMENT */}
       <div className={`mobile-menu ${showMobileMenu ? 'open' : ''}`}>
         <nav className="mobile-nav">
-          {/* Beaux boutons pour les liens */}
-          <Link href="/jouer-sur-stake" className="mobile-menu-button" onClick={() => setShowMobileMenu(false)}>
-            <div className="button-icon">🎰</div>
-            <div className="button-content">
-              <div className="button-title">{t.header.playOnStake || "Jouer sur Stake"}</div>
-              <div className="button-subtitle">{t.header.menu?.inscription || "Inscription, Bonus & Guide"}</div>
-            </div>
-            <svg className="button-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+          {/* Liens simples comme les boutons de langue */}
+          <Link href="/jouer-sur-stake" className="mobile-menu-item" onClick={() => setShowMobileMenu(false)}>
+            <span className="menu-icon">🎰</span>
+            <span>{t.header.playOnStake || "Jouer sur Stake"}</span>
           </Link>
 
-          <Link href="/affiliation" className="mobile-menu-button" onClick={() => setShowMobileMenu(false)}>
-            <div className="button-icon">💰</div>
-            <div className="button-content">
-              <div className="button-title">{t.header.affiliation}</div>
-              <div className="button-subtitle">50% de nos commissions</div>
-            </div>
-            <svg className="button-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+          <Link href="/affiliation" className="mobile-menu-item" onClick={() => setShowMobileMenu(false)}>
+            <span className="menu-icon">💰</span>
+            <span>{t.header.affiliation}</span>
           </Link>
 
-          <Link href="/commissions" className="mobile-menu-button" onClick={() => setShowMobileMenu(false)}>
-            <div className="button-icon">📊</div>
-            <div className="button-content">
-              <div className="button-title">{t.header.commissions}</div>
-              <div className="button-subtitle">Suivi & paiements</div>
-            </div>
-            <svg className="button-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+          <Link href="/commissions" className="mobile-menu-item" onClick={() => setShowMobileMenu(false)}>
+            <span className="menu-icon">📊</span>
+            <span>{t.header.commissions}</span>
           </Link>
           
           {/* Sélecteur de langue mobile */}
@@ -290,93 +272,33 @@ const Header = () => {
           padding: 20px;
         }
 
-        /* Boutons professionnels pour mobile */
-        .mobile-menu-button {
+        /* Liens mobiles simples comme les langues */
+        .mobile-menu-item {
           display: flex;
           align-items: center;
-          gap: 20px;
-          width: 100%;
-          padding: 18px 20px;
-          margin-bottom: 12px;
-          background: #1a2332;
-          border: none;
-          border-radius: 12px;
-          text-decoration: none;
-          transition: all 0.2s ease;
-          position: relative;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .mobile-menu-button::before {
-          content: '';
-          position: absolute;
-          left: 0;
-          top: 0;
-          bottom: 0;
-          width: 4px;
-          background: #4a9eff;
-          border-radius: 12px 0 0 12px;
-          transition: width 0.2s ease;
-        }
-
-        .mobile-menu-button:hover::before {
-          width: 6px;
-          background: #00d632;
-        }
-
-        .mobile-menu-button:hover {
-          background: #1e2939;
-          transform: translateX(2px);
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        }
-
-        .button-icon {
-          font-size: 28px;
-          width: 45px;
-          height: 45px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: rgba(74, 158, 255, 0.1);
+          gap: 12px;
+          padding: 15px;
+          margin-bottom: 10px;
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 255, 255, 0.1);
           border-radius: 10px;
-          flex-shrink: 0;
+          color: white;
+          font-size: 16px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          text-decoration: none;
         }
 
-        .mobile-menu-button:hover .button-icon {
-          background: rgba(0, 214, 50, 0.1);
+        .mobile-menu-item:hover {
+          background: rgba(255, 255, 255, 0.1);
+          border-color: rgba(255, 255, 255, 0.2);
         }
 
-        .button-content {
-          flex: 1;
-        }
-
-        .button-title {
-          color: #ffffff;
-          font-size: 17px;
-          font-weight: 600;
-          margin-bottom: 3px;
-          letter-spacing: -0.3px;
-        }
-
-        .button-subtitle {
-          color: #8b95a6;
-          font-size: 13px;
-          font-weight: 400;
-        }
-
-        .button-arrow {
-          width: 20px;
-          height: 20px;
-          color: #4a5568;
-          flex-shrink: 0;
-          transition: all 0.2s ease;
-          opacity: 0.6;
-        }
-
-        .mobile-menu-button:hover .button-arrow {
-          transform: translateX(3px);
-          opacity: 1;
-          color: #4a9eff;
+        .menu-icon {
+          font-size: 20px;
+          width: 30px;
+          text-align: center;
         }
 
         /* Section langue mobile */
