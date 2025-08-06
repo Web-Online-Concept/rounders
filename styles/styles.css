@@ -1635,6 +1635,49 @@ body {
   border-left: none !important;
   border-right: none !important;
 }
+
+/* À ajouter dans votre section @media (max-width: 768px) */
+
+/* Correction des 4 cartes "Comment ça marche" - en colonne verticale */
+.cards-grid-mobile-scroll {
+  grid-template-columns: 1fr !important;
+  gap: 15px !important;
+}
+
+.cards-grid-mobile-scroll .info-card {
+  width: 100% !important;
+  padding: 25px !important;
+}
+
+/* Correction largeur commission box sur mobile */
+.commission-box-mobile-fix {
+  padding: 30px 20px !important;
+  margin: 0 -20px !important;
+  border-radius: 0 !important;
+}
+
+/* Correction largeur cashback explanation */
+.cashback-mobile-fix {
+  padding: 30px 20px !important;
+  margin: 0 -20px 30px -20px !important;
+  border-radius: 0 !important;
+}
+
+/* Correction largeur bottom line */
+.bottom-line-mobile-fix {
+  padding: 30px 20px !important;
+  margin: 0 -20px 20px -20px !important;
+  border-radius: 0 !important;
+}
+
+/* Correction largeur warning box */
+.warning-box-mobile-fix {
+  padding: 20px !important;
+  margin: 0 -20px !important;
+  border-radius: 0 !important;
+  border-left: none !important;
+  border-right: none !important;
+}
   
   /* ===============================================
    PAGES LÉGALES
