@@ -2,12 +2,14 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
 import { useTranslation } from "../hooks/useTranslation";
+import { useRouter } from "next/router";
 
 const Header = () => {
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const { t, locale, changeLanguage } = useTranslation();
   const dropdownRef = useRef(null);
+  const router = useRouter();
 
   // Fermer le menu si on clique en dehors
   useEffect(() => {
@@ -182,7 +184,7 @@ const Header = () => {
           <button 
             className="mobile-nav-button"
             onClick={() => {
-              window.location.href = '/jouer-sur-stake';
+              router.push('/jouer-sur-stake', '/jouer-sur-stake', { locale });
               setShowMobileMenu(false);
             }}
           >
@@ -193,7 +195,7 @@ const Header = () => {
           <button 
             className="mobile-nav-button"
             onClick={() => {
-              window.location.href = '/affiliation';
+              router.push('/affiliation', '/affiliation', { locale });
               setShowMobileMenu(false);
             }}
           >
@@ -204,7 +206,7 @@ const Header = () => {
           <button 
             className="mobile-nav-button"
             onClick={() => {
-              window.location.href = '/commissions';
+              router.push('/commissions', '/commissions', { locale });
               setShowMobileMenu(false);
             }}
           >
@@ -215,7 +217,7 @@ const Header = () => {
           <button 
             className="mobile-nav-button"
             onClick={() => {
-              window.location.href = '/declaration';
+              router.push('/declaration', '/declaration', { locale });
               setShowMobileMenu(false);
             }}
           >
