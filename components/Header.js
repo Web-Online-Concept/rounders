@@ -282,23 +282,26 @@ const Header = () => {
           background: rgba(255, 255, 255, 0.05);
           border: 1px solid rgba(255, 255, 255, 0.1);
           border-radius: 10px;
-          color: white;
+          color: white !important;
           font-size: 16px;
           font-weight: 500;
           cursor: pointer;
           transition: all 0.3s ease;
-          text-decoration: none;
+          text-decoration: none !important;
+          width: 100%;
         }
 
         .mobile-menu-item:hover {
           background: rgba(255, 255, 255, 0.1);
           border-color: rgba(255, 255, 255, 0.2);
+          color: white !important;
         }
 
         .menu-icon {
           font-size: 20px;
           width: 30px;
           text-align: center;
+          display: inline-block;
         }
 
         /* Section langue mobile */
