@@ -211,6 +211,17 @@ const Header = () => {
             <span className="button-emoji">📊</span>
             <span>{t.header.commissions}</span>
           </button>
+
+          <button 
+            className="mobile-nav-button"
+            onClick={() => {
+              window.location.href = '/declaration';
+              setShowMobileMenu(false);
+            }}
+          >
+            <span className="button-emoji">📝</span>
+            <span>Déclarez votre affiliation</span>
+          </button>
           
           {/* Sélecteur de langue mobile */}
           <div className="mobile-language-selector">
