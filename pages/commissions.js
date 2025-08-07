@@ -95,8 +95,14 @@ export default function CommissionsPage() {
       />
 
       <main className="commissions-page">
-        {/* Hero Section */}
-        <section className="hero-section">
+        {/* Hero Section - STRUCTURE IDENTIQUE À AFFILIATION */}
+        <section className="hero-section" style={{
+          minHeight: '400px',
+          height: '400px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
           <div className="hero-content">
             <h1 className="hero-title" dangerouslySetInnerHTML={{ 
               __html: `${t.commissions.hero.title} <span class="highlight">${t.commissions.hero.highlight}</span>` 
@@ -255,16 +261,16 @@ export default function CommissionsPage() {
           background: #ffffff;
         }
 
-        /* Hero Section */
+        /* Hero Section - STYLES CORRIGÉS POUR MATCHER AFFILIATION */
         .hero-section {
           background: linear-gradient(135deg, #1a2c38 0%, #2d4356 100%);
-          padding: 60px 20px;
           text-align: center;
-          min-height: 400px;
-          height: 400px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
+        }
+
+        .hero-content {
+          padding: 20px;
+          width: 100%;
+          max-width: 1200px;
         }
 
         .hero-title {
@@ -567,13 +573,12 @@ export default function CommissionsPage() {
           padding: 40px;
         }
 
-        /* CORRECTIONS MOBILE */
+        /* CORRECTIONS MOBILE - IDENTIQUES À AFFILIATION */
         @media (max-width: 768px) {
-          /* Hero mobile */
+          /* Hero mobile - HAUTEUR FIXE COMME AFFILIATION */
           .hero-section {
-            padding: 40px 20px;
-            min-height: 300px;
-            height: auto;
+            min-height: 300px !important;
+            height: 300px !important;
           }
           
           .hero-title {
