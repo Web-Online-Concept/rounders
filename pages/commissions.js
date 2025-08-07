@@ -6,8 +6,17 @@ import SEOHead from "../components/SEOHead";
 export default function CommissionsPage() {
   const { t } = useTranslation();
   const [affiliates, setAffiliates] = useState([]);
-  const [expandedId, setExpandedId] = useState(null);
+  const [stats, setStats] = useState({
+    totalAffiliates: 0,
+    totalCommission: 0,
+    totalBet: 0,
+    totalPending: 0,
+    totalPaid: 0,
+    lastUpdate: null
+  });
   const [loading, setLoading] = useState(true);
+  const [selectedAffiliate, setSelectedAffiliate] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -15,59 +24,49 @@ export default function CommissionsPage() {
 
   const loadData = async () => {
     try {
-      // Charger les affiliés depuis l'API Neon
-      const affiliatesResponse = await fetch('/api/affiliates');
+      const response = await fetch('/api/affiliates/public');
       
-      if (affiliatesResponse.ok) {
-        const affiliatesResult = await affiliatesResponse.json();
-        const affiliatesData = affiliatesResult.data || [];
+      if (response.ok) {
+        const result = await response.json();
+        const affiliatesData = result.data || [];
         
-        // Charger les paiements depuis l'API Neon
-        const paymentsResponse = await fetch('/api/payments');
-        const paymentsResult = paymentsResponse.ok ? await paymentsResponse.json() : { data: [] };
-        const paymentsData = paymentsResult.data || [];
+        setAffiliates(affiliatesData.map(aff => ({
+          id: aff.id,
+          username: aff.pseudoMasked || '***',
+          commission: aff.totalCommission || 0,
+          totalBet: aff.totalBet || 0,
+          pending: aff.pendingAmount || 0,
+          paid: aff.paidAmount || 0,
+          joinedAt: aff.registrationDate || aff.createdAt,
+          lastUpdate: aff.lastUpdate || null
+        })));
         
-        // Transformer les données pour le format de la page
-        const transformedData = affiliatesData.map(aff => {
-          // Récupérer les paiements de cet affilié
-          const affiliatePayments = paymentsData
-            .filter(p => p.affiliateId === aff.id)
-            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-            .slice(0, 3) // Les 3 derniers paiements
-            .map(p => ({
-              date: new Date(p.createdAt).toLocaleDateString('fr-FR'),
-              type: p.crypto || 'USDT',
-              amount: p.amount
-            }));
-          
-          return {
-            id: aff.id,
-            pseudo: aff.pseudoMasked, // Toujours masqué sur la page publique
-            totalBet: aff.totalBet || 0,
-            totalCommission: aff.totalCommission || 0,
-            paidCommission: aff.paidAmount || 0,
-            pendingCommission: aff.pendingAmount || 0,
-            paymentHistory: affiliatePayments,
-            lastUpdate: aff.lastUpdate || null,
-            joinDate: aff.registrationDate || null
-          };
+        setStats({
+          totalAffiliates: affiliatesData.length,
+          totalCommission: affiliatesData.reduce((sum, aff) => sum + (aff.totalCommission || 0), 0),
+          totalBet: affiliatesData.reduce((sum, aff) => sum + (aff.totalBet || 0), 0),
+          totalPending: affiliatesData.reduce((sum, aff) => sum + (aff.pendingAmount || 0), 0),
+          totalPaid: affiliatesData.reduce((sum, aff) => sum + (aff.paidAmount || 0), 0),
+          lastUpdate: new Date()
         });
-        
-        setAffiliates(transformedData);
-      } else {
-        console.error('Erreur lors du chargement des données');
-        setAffiliates([]);
       }
     } catch (error) {
       console.error('Erreur:', error);
-      setAffiliates([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const toggleExpand = (id) => {
-    setExpandedId(expandedId === id ? null : id);
+  const loadAffiliateHistory = async (affiliateId) => {
+    const affiliate = affiliates.find(a => a.id === affiliateId);
+    if (affiliate) {
+      setSelectedAffiliate({
+        affiliate: affiliate,
+        history: [],
+        payments: []
+      });
+      setShowModal(true);
+    }
   };
 
   const formatCurrency = (amount) => {
@@ -75,6 +74,17 @@ export default function CommissionsPage() {
       style: 'currency',
       currency: 'EUR'
     }).format(amount);
+  };
+
+  const formatDate = (date) => {
+    if (!date) return 'N/A';
+    return new Date(date).toLocaleDateString('fr-FR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   };
 
   return (
@@ -86,51 +96,18 @@ export default function CommissionsPage() {
 
       <main className="commissions-page">
         {/* Hero Section */}
-        <section className="hero-section" style={{
-          minHeight: '400px',
-          height: '400px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          background: 'linear-gradient(135deg, #1a2c38 0%, #2d4356 100%)'
-        }}>
+        <section className="hero-section">
           <div className="hero-content">
-            <h1 className="hero-title" style={{color: 'white'}} dangerouslySetInnerHTML={{ 
+            <h1 className="hero-title" dangerouslySetInnerHTML={{ 
               __html: `${t.commissions.hero.title} <span class="highlight">${t.commissions.hero.highlight}</span>` 
             }} />
-            <p className="hero-subtitle" style={{color: '#cbd5e1'}}>
+            <p className="hero-subtitle">
               {t.commissions.hero.subtitle}
             </p>
             
-            <div style={{marginTop: '30px', textAlign: 'center'}}>
-              <p style={{color: '#94a3b8', fontSize: '18px', marginBottom: '15px'}}>
-                {t.commissions.hero.notReceiving}
-              </p>
-              <Link href="/declaration" style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '10px',
-                background: 'linear-gradient(135deg, #4a9eff 0%, #3b82f6 100%)',
-                color: 'white',
-                padding: '14px 30px',
-                borderRadius: '10px',
-                textDecoration: 'none',
-                fontWeight: '600',
-                fontSize: '16px',
-                transition: 'all 0.3s ease',
-                boxShadow: '0 4px 20px rgba(74, 158, 255, 0.3)',
-                border: '2px solid transparent'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 6px 30px rgba(74, 158, 255, 0.4)';
-                e.currentTarget.style.border = '2px solid rgba(255, 255, 255, 0.2)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 20px rgba(74, 158, 255, 0.3)';
-                e.currentTarget.style.border = '2px solid transparent';
-              }}>
+            <div className="hero-cta">
+              <p>{t.commissions.hero.notReceiving}</p>
+              <Link href="/declaration" className="cta-button">
                 {t.commissions.hero.declare}
                 <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
                   <path d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" />
@@ -140,259 +117,96 @@ export default function CommissionsPage() {
           </div>
         </section>
 
-        {/* Stats globales */}
-        <section className="section-wrapper" style={{
-          paddingTop: '30px', 
-          paddingBottom: '30px',
-          background: 'linear-gradient(135deg, #f8fafc 0%, #e5e7eb 100%)'
-        }}>
+        {/* Stats Section */}
+        <section className="stats-section">
           <div className="section-container">
             <div className="global-stats">
-              <div className="stat-card" style={{
-                padding: '18px 20px',
-                background: 'white',
-                borderRadius: '12px',
-                border: '1px solid #e5e7eb',
-                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
-                transition: 'all 0.3s ease'
-              }}>
-                <div className="stat-icon" style={{fontSize: '28px'}}>👥</div>
+              <div className="stat-card">
+                <div className="stat-icon">👥</div>
                 <div className="stat-content">
-                  <h3 style={{
-                    fontSize: '12px',
-                    marginBottom: '4px',
-                    color: '#64748b',
-                    fontWeight: '600',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.5px'
-                  }}>{t.commissions.stats.activeAffiliates}</h3>
-                  <p className="stat-value" style={{
-                    fontSize: '22px',
-                    fontWeight: '700',
-                    color: '#1a2c38',
-                    margin: 0
-                  }}>{affiliates.length}</p>
+                  <h3>{t.commissions.stats.activeAffiliates}</h3>
+                  <p className="stat-value">{stats.totalAffiliates}</p>
                 </div>
               </div>
-              <div className="stat-card" style={{
-                padding: '18px 20px',
-                background: 'white',
-                borderRadius: '12px',
-                border: '1px solid #e5e7eb',
-                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
-                transition: 'all 0.3s ease'
-              }}>
-                <div className="stat-icon" style={{fontSize: '28px'}}>💰</div>
+              <div className="stat-card">
+                <div className="stat-icon">💰</div>
                 <div className="stat-content">
-                  <h3 style={{
-                    fontSize: '12px',
-                    marginBottom: '4px',
-                    color: '#64748b',
-                    fontWeight: '600',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.5px'
-                  }}>{t.commissions.stats.totalCommissions}</h3>
-                  <p className="stat-value" style={{
-                    fontSize: '22px',
-                    fontWeight: '700',
-                    color: '#1a2c38',
-                    margin: 0
-                  }}>
-                    {formatCurrency(affiliates.reduce((sum, aff) => sum + aff.totalCommission, 0))}
-                  </p>
+                  <h3>{t.commissions.stats.totalCommissions}</h3>
+                  <p className="stat-value">{formatCurrency(stats.totalCommission)}</p>
                 </div>
               </div>
-              <div className="stat-card" style={{
-                padding: '18px 20px',
-                background: 'white',
-                borderRadius: '12px',
-                border: '1px solid #e5e7eb',
-                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
-                transition: 'all 0.3s ease'
-              }}>
-                <div className="stat-icon" style={{fontSize: '28px'}}>✅</div>
+              <div className="stat-card">
+                <div className="stat-icon">✅</div>
                 <div className="stat-content">
-                  <h3 style={{
-                    fontSize: '12px',
-                    marginBottom: '4px',
-                    color: '#64748b',
-                    fontWeight: '600',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.5px'
-                  }}>{t.commissions.stats.totalPaid}</h3>
-                  <p className="stat-value" style={{
-                    fontSize: '22px',
-                    fontWeight: '700',
-                    color: '#16a34a',
-                    margin: 0
-                  }}>
-                    {formatCurrency(affiliates.reduce((sum, aff) => sum + aff.paidCommission, 0))}
-                  </p>
+                  <h3>{t.commissions.stats.totalPaid}</h3>
+                  <p className="stat-value green">{formatCurrency(stats.totalPaid)}</p>
                 </div>
               </div>
-              <div className="stat-card" style={{
-                padding: '18px 20px',
-                background: 'white',
-                borderRadius: '12px',
-                border: '1px solid #e5e7eb',
-                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
-                transition: 'all 0.3s ease'
-              }}>
-                <div className="stat-icon" style={{fontSize: '28px'}}>⏳</div>
+              <div className="stat-card">
+                <div className="stat-icon">⏳</div>
                 <div className="stat-content">
-                  <h3 style={{
-                    fontSize: '12px',
-                    marginBottom: '4px',
-                    color: '#64748b',
-                    fontWeight: '600',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.5px'
-                  }}>{t.commissions.stats.pending}</h3>
-                  <p className="stat-value" style={{
-                    fontSize: '22px',
-                    fontWeight: '700',
-                    color: '#f59e0b',
-                    margin: 0
-                  }}>
-                    {formatCurrency(affiliates.reduce((sum, aff) => sum + aff.pendingCommission, 0))}
-                  </p>
+                  <h3>{t.commissions.stats.pending}</h3>
+                  <p className="stat-value orange">{formatCurrency(stats.totalPending)}</p>
                 </div>
               </div>
             </div>
+
+            {stats.lastUpdate && (
+              <div className="update-info">
+                {t.commissions.table.lastUpdate} : {formatDate(stats.lastUpdate)}
+              </div>
+            )}
           </div>
         </section>
-<section className="section-wrapper dark-bg" style={{paddingTop: '30px'}}>
+{/* Affiliates List */}
+        <section className="affiliates-section">
           <div className="section-container">
-            <h2 className="section-title" style={{
-              marginTop: 0,
-              marginBottom: '30px'
-            }}>{t.commissions.table.title}</h2>
+            <h2 className="section-title">{t.commissions.table.title}</h2>
 
             {loading ? (
               <div className="loading">
                 <div className="spinner"></div>
-                <p>{t.commissions.table.loading || "Chargement des données..."}</p>
+                <p>{t.commissions.table.loading}</p>
               </div>
             ) : (
               <div className="affiliates-list">
                 {affiliates
-                  .sort((a, b) => b.totalBet - a.totalBet) // Tri par total misé décroissant
+                  .sort((a, b) => b.totalBet - a.totalBet)
                   .map((affiliate) => (
-                  <div key={affiliate.id} className="affiliate-item">
-                    <div 
-                      className="affiliate-header"
-                      onClick={() => toggleExpand(affiliate.id)}
-                    >
-                      <div className="affiliate-main-info">
-                        <div className="affiliate-identity">
-                          <h3 className="masked">
-                            {affiliate.pseudo}  {/* TOUJOURS afficher le pseudo masqué */}
-                          </h3>
-                          {affiliate.joinDate && (
-                            <span style={{
-                              color: '#ffffff',
-                              fontStyle: 'italic',
-                              fontSize: '14px',
-                              marginLeft: '10px',
-                              opacity: 0.9
-                            }}>
-                              ({t.commissions.table.since} {new Date(affiliate.joinDate).toLocaleDateString('fr-FR', {
-                                day: 'numeric',
-                                month: 'long',
-                                year: 'numeric'
-                              })})
-                            </span>
-                          )}
-                          <span style={{
-                            marginLeft: 'auto',
-                            fontSize: '11px',
-                            color: '#ffffff',
-                            fontWeight: '500',
-                            marginRight: '15px'
-                          }}>
-                            📅 {t.commissions.table.lastUpdate} : {affiliate.lastUpdate ? new Date(affiliate.lastUpdate).toLocaleString('fr-FR', {
-                              day: '2-digit',
-                              month: '2-digit',
-                              year: '2-digit',
-                              hour: '2-digit',
-                              minute: '2-digit'
-                            }) : 'N/A'}
-                          </span>
-                        </div>
-                        <div className="affiliate-stats">
-                          <div className="stat">
-                            <span className="stat-label">{t.commissions.table.totalBet}</span>
-                            <span className="stat-value">{formatCurrency(affiliate.totalBet)}</span>
-                          </div>
-                          <div className="stat">
-                            <span className="stat-label">{t.commissions.table.totalCommission}</span>
-                            <span className="stat-value">{formatCurrency(affiliate.totalCommission)}</span>
-                          </div>
-                          <div className="stat">
-                            <span className="stat-label">{t.commissions.table.paid}</span>
-                            <span className="stat-value paid">{formatCurrency(affiliate.paidCommission)}</span>
-                          </div>
-                          <div className="stat">
-                            <span className="stat-label">{t.commissions.table.pending}</span>
-                            <span className="stat-value pending">{formatCurrency(affiliate.pendingCommission)}</span>
-                          </div>
-                        </div>
+                  <div key={affiliate.id} className="affiliate-card" onClick={() => loadAffiliateHistory(affiliate.id)}>
+                    <div className="affiliate-header">
+                      <h3 className="masked">
+                        <span style={{color: '#FFFFFF', fontStyle: 'normal'}}>{t.commissions.table.pseudoStake || 'Pseudo Stake'} : </span>
+                        {affiliate.username}
+                      </h3>
+                      <span className="join-date">
+                        {t.commissions.table.since} {new Date(affiliate.joinedAt).toLocaleDateString('fr-FR')}
+                      </span>
+                    </div>
+                    <div className="affiliate-stats">
+                      <div className="stat-item">
+                        <span className="label">{t.commissions.table.totalBet}</span>
+                        <span className="value">{formatCurrency(affiliate.totalBet)}</span>
                       </div>
-                      <div className="expand-icon">
-                        <svg 
-                          width="24" 
-                          height="24" 
-                          viewBox="0 0 24 24" 
-                          fill="none"
-                          style={{
-                            transform: expandedId === affiliate.id ? 'rotate(180deg)' : 'rotate(0deg)',
-                            transition: 'transform 0.3s ease'
-                          }}
-                        >
-                          <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
+                      <div className="stat-item">
+                        <span className="label">{t.commissions.table.totalCommission}</span>
+                        <span className="value">{formatCurrency(affiliate.commission)}</span>
+                      </div>
+                      <div className="stat-item">
+                        <span className="label">{t.commissions.table.paid}</span>
+                        <span className="value green">{formatCurrency(affiliate.paid)}</span>
+                      </div>
+                      <div className="stat-item">
+                        <span className="label">{t.commissions.table.pending}</span>
+                        <span className="value orange">{formatCurrency(affiliate.pending)}</span>
                       </div>
                     </div>
-
-                    {expandedId === affiliate.id && (
-                      <div className="affiliate-details">
-                        {affiliate.paymentHistory && affiliate.paymentHistory.length > 0 ? (
-                          <div className="payment-history">
-                            <h4>{t.commissions.table.lastPayments}</h4>
-                            <div className="history-list">
-                              {affiliate.paymentHistory.map((payment, index) => (
-                                <div key={index} className="history-item">
-                                  <span className="history-date">📅 {payment.date}</span>
-                                  <span className="history-type">
-                                    <span style={{
-                                      background: payment.type === 'BTC' ? '#f7931a' : 
-                                                 payment.type === 'ETH' ? '#627eea' :
-                                                 payment.type === 'USDT' ? '#26a17b' : '#4a9eff',
-                                      color: 'white',
-                                      padding: '4px 10px',
-                                      borderRadius: '6px',
-                                      fontSize: '12px',
-                                      fontWeight: '600'
-                                    }}>
-                                      {payment.type}
-                                    </span>
-                                  </span>
-                                  <span className="history-amount">{formatCurrency(payment.amount)}</span>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        ) : (
-                          <div style={{
-                            textAlign: 'center',
-                            padding: '30px',
-                            color: '#94a3b8'
-                          }}>
-                            <p>{t.commissions.table.noPayments}</p>
-                          </div>
-                        )}
-                      </div>
-                    )}
+                    <div className="view-details">
+                      <span>{t.commissions.table.viewDetails || t.commissions.table.expand || 'Voir détails'}</span>
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.293l-3-3a1 1 0 00-1.414 1.414L10.586 9.5H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" />
+                      </svg>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -400,53 +214,169 @@ export default function CommissionsPage() {
           </div>
         </section>
 
+        {/* Modal */}
+        {showModal && selectedAffiliate && (
+          <div className="modal-overlay" onClick={() => setShowModal(false)}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <button className="modal-close" onClick={() => setShowModal(false)}>×</button>
+              
+              <h2>{t.commissions.details?.title || 'Historique détaillé'}</h2>
+              <div className="modal-info">
+                <h3>{selectedAffiliate.affiliate.username}</h3>
+                <div className="modal-stats">
+                  <div>
+                    <span>{t.commissions.table.totalBet}</span>
+                    <strong>{formatCurrency(selectedAffiliate.affiliate.totalBet)}</strong>
+                  </div>
+                  <div>
+                    <span>{t.commissions.table.totalCommission}</span>
+                    <strong>{formatCurrency(selectedAffiliate.affiliate.commission)}</strong>
+                  </div>
+                  <div>
+                    <span>{t.commissions.table.paid}</span>
+                    <strong className="green">{formatCurrency(selectedAffiliate.affiliate.paid)}</strong>
+                  </div>
+                  <div>
+                    <span>{t.commissions.table.pending}</span>
+                    <strong className="orange">{formatCurrency(selectedAffiliate.affiliate.pending)}</strong>
+                  </div>
+                </div>
+              </div>
+
+              <p className="no-data">{t.commissions.details?.noHistory || 'Aucun historique disponible'}</p>
+            </div>
+          </div>
+        )}
       </main>
-<style jsx>{`
+
+      <style jsx>{`
         .commissions-page {
           min-height: 100vh;
           background: #ffffff;
+        }
+
+        /* Hero Section */
+        .hero-section {
+          background: linear-gradient(135deg, #1a2c38 0%, #2d4356 100%);
+          padding: 80px 20px;
+          text-align: center;
+        }
+
+        .hero-title {
+          color: white;
+          font-size: 2.5rem;
+          margin-bottom: 1rem;
+        }
+
+        .hero-title :global(.highlight) {
+          color: #4a9eff;
+        }
+
+        .hero-subtitle {
+          color: #cbd5e1;
+          font-size: 1.25rem;
+          margin-bottom: 2rem;
+        }
+
+        .hero-cta {
+          margin-top: 2rem;
+        }
+
+        .hero-cta p {
+          color: #94a3b8;
+          font-size: 1.125rem;
+          margin-bottom: 1rem;
+        }
+
+        .cta-button {
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          background: linear-gradient(135deg, #4a9eff 0%, #3b82f6 100%);
+          color: white;
+          padding: 14px 30px;
+          border-radius: 10px;
+          text-decoration: none;
+          font-weight: 600;
+          transition: all 0.3s ease;
+        }
+
+        .cta-button:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 30px rgba(74, 158, 255, 0.4);
+        }
+
+        /* Stats Section */
+        .stats-section {
+          background: #f8fafc;
+          padding: 40px 20px;
+        }
+
+        .section-container {
+          max-width: 1200px;
+          margin: 0 auto;
         }
 
         .global-stats {
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
           gap: 20px;
-          margin-bottom: 0;
         }
 
         .stat-card {
           background: white;
-          padding: 30px;
-          border-radius: 16px;
-          border: 2px solid #e5e7eb;
+          padding: 20px;
+          border-radius: 12px;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
           display: flex;
           align-items: center;
           gap: 20px;
-          transition: all 0.3s ease;
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-        }
-
-        .stat-card:hover {
-          transform: translateY(-3px);
-          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
         }
 
         .stat-icon {
-          font-size: 48px;
-          line-height: 1;
+          font-size: 2.5rem;
         }
 
         .stat-content h3 {
-          font-size: 16px;
+          font-size: 0.875rem;
           color: #64748b;
-          margin-bottom: 8px;
+          margin-bottom: 0.5rem;
+          text-transform: uppercase;
         }
 
         .stat-value {
-          font-size: 28px;
-          font-weight: 800;
+          font-size: 1.5rem;
+          font-weight: 700;
           color: #1a2c38;
           margin: 0;
+        }
+
+        .stat-value.green {
+          color: #16a34a;
+        }
+
+        .stat-value.orange {
+          color: #f59e0b;
+        }
+
+        .update-info {
+          text-align: center;
+          margin-top: 20px;
+          color: #64748b;
+          font-size: 0.875rem;
+        }
+
+        /* Affiliates Section - MÊME FOND QUE LES STATS */
+        .affiliates-section {
+          padding: 40px 20px;
+          background: #f8fafc;
+        }
+
+        .section-title {
+          color: #1a2c38;
+          text-align: center;
+          margin-bottom: 2rem;
+          font-size: 2rem;
         }
 
         .loading {
@@ -458,7 +388,7 @@ export default function CommissionsPage() {
         .spinner {
           width: 50px;
           height: 50px;
-          border: 4px solid #f3f4f6;
+          border: 4px solid #2d4356;
           border-top: 4px solid #4a9eff;
           border-radius: 50%;
           margin: 0 auto 20px;
@@ -466,343 +396,178 @@ export default function CommissionsPage() {
         }
 
         @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
+          to { transform: rotate(360deg); }
         }
 
         .affiliates-list {
-          display: flex;
-          flex-direction: column;
+          display: grid;
           gap: 20px;
         }
 
-        .affiliate-item {
+        .affiliate-card {
           background: linear-gradient(135deg, #2d4356 0%, #1a2c38 100%);
           border-radius: 16px;
-          border: 2px solid rgba(74, 158, 255, 0.2);
-          overflow: hidden;
+          padding: 25px;
+          cursor: pointer;
           transition: all 0.3s ease;
+          border: 2px solid rgba(74, 158, 255, 0.2);
           box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
-        .affiliate-item:hover {
+        .affiliate-card:hover {
+          transform: translateY(-2px);
           border-color: rgba(74, 158, 255, 0.4);
           box-shadow: 0 6px 25px rgba(74, 158, 255, 0.3);
-          transform: translateY(-2px);
         }
 
         .affiliate-header {
-          padding: 25px 30px;
-          cursor: pointer;
           display: flex;
           justify-content: space-between;
           align-items: center;
-          transition: background 0.3s ease;
+          margin-bottom: 20px;
         }
 
-        .affiliate-header:hover {
-          background: rgba(74, 158, 255, 0.05);
-        }
-
-        .affiliate-main-info {
-          flex: 1;
-        }
-
-        .affiliate-identity {
-          display: flex;
-          align-items: center;
-          gap: 15px;
-          margin-bottom: 15px;
-          width: 100%;
-        }
-
-        .affiliate-identity h3 {
-          font-size: 20px;
-          margin: 0;
+        .affiliate-header h3 {
           color: #60a5fa;
-          display: flex;
-          align-items: center;
-          gap: 8px;
+          font-size: 1.25rem;
+          margin: 0;
           text-shadow: 0 0 20px rgba(96, 165, 250, 0.5);
         }
 
-        .affiliate-identity h3.masked {
-          color: #60a5fa;
+        .affiliate-header h3.masked {
           font-style: italic;
         }
 
-        .verified-badge {
-          background: #00d632;
-          color: white;
-          width: 20px;
-          height: 20px;
-          border-radius: 50%;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 12px;
-          font-weight: bold;
-        }
-
-        .vip-badge {
-          padding: 4px 12px;
-          border-radius: 20px;
-          font-size: 12px;
-          font-weight: 600;
-          color: #1a2c38;
+        .join-date {
+          color: #94a3b8;
+          font-size: 0.875rem;
         }
 
         .affiliate-stats {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-          gap: 20px;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 15px;
+          margin-bottom: 20px;
         }
 
-        .stat {
-          display: flex;
-          flex-direction: column;
-          gap: 4px;
-        }
-
-        .stat-label {
-          font-size: 13px;
-          color: #94a3b8;
-        }
-
-        .stat-value {
-          font-size: 18px;
-          font-weight: 700;
-          color: white;
-        }
-
-        .stat-value.paid {
-          color: #00d632;
-        }
-
-        .stat-value.pending {
-          color: #ffd700;
-        }
-
-        .expand-icon {
-          color: #94a3b8;
-        }
-
-        .affiliate-details {
-          padding: 20px 30px 30px 30px;
-          background: rgba(0, 0, 0, 0.3);
-          border-top: 1px solid rgba(74, 158, 255, 0.2);
-          animation: slideDown 0.3s ease;
-        }
-
-        @keyframes slideDown {
-          from {
-            opacity: 0;
-            transform: translateY(-10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        .details-grid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 20px;
-          margin: 20px 0;
-          padding: 20px;
-          background: rgba(255, 255, 255, 0.03);
-          border-radius: 12px;
-        }
-
-        .detail-item {
-          display: flex;
-          flex-direction: column;
-          gap: 4px;
-        }
-
-        .detail-label {
-          font-size: 13px;
-          color: #94a3b8;
-        }
-
-        .detail-value {
-          font-size: 16px;
-          color: white;
-          font-weight: 600;
-        }
-
-        .payment-history {
-          margin-top: 0;
-        }
-
-        .payment-history h4 {
-          color: white;
-          margin-top: 0;
-          margin-bottom: 15px;
-          font-size: 18px;
-        }
-
-        .history-list {
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-        }
-
-        .history-item {
-          display: grid;
-          grid-template-columns: 120px 1fr auto;
-          gap: 20px;
-          padding: 15px 20px;
-          background: rgba(255, 255, 255, 0.05);
-          border-radius: 10px;
-          align-items: center;
-        }
-
-        .history-date {
-          color: #94a3b8;
-          font-size: 14px;
-        }
-
-        .history-type {
-          color: white;
-          font-size: 14px;
-        }
-
-        .history-amount {
-          color: #00d632;
-          font-weight: 700;
-          font-size: 16px;
-        }
-
-        .confirmation-notice {
-          background: rgba(255, 204, 0, 0.1);
-          border: 1px solid rgba(255, 204, 0, 0.3);
-          border-radius: 12px;
-          padding: 20px;
-          margin-top: 20px;
-        }
-
-        .confirmation-notice p {
-          color: #ffd700;
-          margin: 0;
-          font-size: 14px;
-          line-height: 1.6;
-        }
-
-        .process-cards {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-          gap: 30px;
-          margin-top: 40px;
-        }
-
-        .process-card {
-          background: #f8fafc;
-          padding: 30px;
-          border-radius: 16px;
+        .stat-item {
           text-align: center;
-          border: 1px solid #e5e7eb;
-          position: relative;
         }
 
-        .process-number {
-          position: absolute;
-          top: -15px;
-          left: 50%;
-          transform: translateX(-50%);
-          background: #4a9eff;
+        .stat-item .label {
+          display: block;
+          color: #94a3b8;
+          font-size: 0.875rem;
+          margin-bottom: 4px;
+        }
+
+        .stat-item .value {
+          display: block;
           color: white;
-          width: 40px;
-          height: 40px;
-          border-radius: 50%;
+          font-size: 1.125rem;
+          font-weight: 700;
+        }
+
+        .stat-item .value.green {
+          color: #00d632;
+        }
+
+        .stat-item .value.orange {
+          color: #ffd700;
+        }
+
+        .view-details {
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 20px;
-          font-weight: bold;
+          gap: 8px;
+          color: #94a3b8;
+          font-size: 0.875rem;
         }
 
-        .process-card h3 {
-          color: #1a2c38;
-          margin: 20px 0 15px;
-          font-size: 20px;
-        }
-
-        .process-card p {
-          color: #64748b;
-          line-height: 1.6;
-          margin: 0;
-        }
-
-        .declaration-cta {
-          background: linear-gradient(135deg, #4a9eff 0%, #3b82f6 100%);
-          padding: 80px 20px;
-          text-align: center;
-          margin-top: 60px;
-        }
-
-        .declaration-cta .cta-content {
-          max-width: 800px;
-          margin: 0 auto;
-        }
-
-        .declaration-cta h2 {
-          color: white;
-          font-size: 36px;
-          margin-bottom: 20px;
-          font-weight: 800;
-        }
-
-        .declaration-cta p {
-          color: rgba(255, 255, 255, 0.9);
-          font-size: 20px;
-          margin-bottom: 30px;
-        }
-
-        .cta-button {
-          display: inline-flex;
+        /* Modal */
+        .modal-overlay {
+          position: fixed;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.7);
+          display: flex;
           align-items: center;
-          gap: 10px;
-          background: white;
-          color: #4a9eff;
-          padding: 16px 40px;
-          border-radius: 10px;
-          text-decoration: none;
-          font-weight: 700;
-          font-size: 18px;
-          transition: all 0.3s ease;
-          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+          justify-content: center;
+          padding: 20px;
+          z-index: 1000;
         }
 
-        .cta-button:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 6px 30px rgba(0, 0, 0, 0.3);
+        .modal-content {
+          background: white;
+          border-radius: 16px;
+          max-width: 600px;
+          width: 100%;
+          padding: 30px;
+          position: relative;
+        }
+
+        .modal-close {
+          position: absolute;
+          top: 20px;
+          right: 20px;
+          background: none;
+          border: none;
+          font-size: 2rem;
+          cursor: pointer;
+          color: #64748b;
+        }
+
+        .modal-info {
+          background: #f8fafc;
+          padding: 20px;
+          border-radius: 12px;
+          margin: 20px 0;
+        }
+
+        .modal-info h3 {
+          color: #4a9eff;
+          margin: 0 0 15px 0;
+        }
+
+        .modal-stats {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 20px;
+          text-align: center;
+        }
+
+        .modal-stats span {
+          display: block;
+          color: #64748b;
+          font-size: 0.875rem;
+          margin-bottom: 5px;
+        }
+
+        .modal-stats strong {
+          font-size: 1.125rem;
+          color: #1a2c38;
+        }
+
+        .modal-stats strong.green {
+          color: #16a34a;
+        }
+
+        .modal-stats strong.orange {
+          color: #f59e0b;
+        }
+
+        .no-data {
+          text-align: center;
+          color: #94a3b8;
+          padding: 40px;
         }
 
         @media (max-width: 768px) {
-          .affiliate-stats {
+          .modal-stats {
             grid-template-columns: repeat(2, 1fr);
-          }
-
-          .details-grid {
-            grid-template-columns: 1fr;
-          }
-
-          .history-item {
-            grid-template-columns: 1fr;
-            gap: 8px;
-          }
-
-          .declaration-cta h2 {
-            font-size: 28px;
-          }
-
-          .declaration-cta p {
-            font-size: 16px;
           }
         }
       `}</style>
     </>
   );
-}	  
+}		

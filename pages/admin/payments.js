@@ -13,6 +13,7 @@ export default function AdminPayments() {
   const [paymentAmount, setPaymentAmount] = useState('');
   const [paymentCrypto, setPaymentCrypto] = useState('USDT');
   const [paymentNote, setPaymentNote] = useState('');
+  const [transactionId, setTransactionId] = useState('');
 
   useEffect(() => {
     // Vérifier l'authentification
@@ -27,18 +28,28 @@ export default function AdminPayments() {
 
   const loadData = async () => {
     try {
-      // Charger les affiliés depuis l'API Neon
-      const affiliatesResponse = await fetch('/api/affiliates');
+      const token = localStorage.getItem('adminToken');
+      
+      // Charger les affiliés
+      const affiliatesResponse = await fetch('/api/affiliates', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       if (affiliatesResponse.ok) {
         const affiliatesResult = await affiliatesResponse.json();
-        setAffiliates(affiliatesResult.data || []);
+        setAffiliates(affiliatesResult.affiliates || []);
       }
 
-      // Charger les paiements depuis l'API Neon
-      const paymentsResponse = await fetch('/api/payments');
+      // Charger les paiements
+      const paymentsResponse = await fetch('/api/payments', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       if (paymentsResponse.ok) {
         const paymentsResult = await paymentsResponse.json();
-        setPayments(paymentsResult.data || []);
+        setPayments(paymentsResult.payments || []);
       }
 
       setIsLoading(false);
@@ -54,7 +65,7 @@ export default function AdminPayments() {
     return new Intl.NumberFormat('fr-FR', {
       style: 'currency',
       currency: 'EUR'
-    }).format(amount);
+    }).format(amount || 0);
   };
 
   const formatDate = (dateString) => {
@@ -74,19 +85,28 @@ export default function AdminPayments() {
     }
 
     const affiliate = affiliates.find(a => a.id === selectedAffiliate);
+    const amount = parseFloat(paymentAmount);
+    
+    if (amount > parseFloat(affiliate.pendingAmount)) {
+      alert(`Le montant ne peut pas dépasser ${formatCurrency(affiliate.pendingAmount)}`);
+      return;
+    }
     
     try {
-      // Enregistrer le paiement dans Neon
-      const response = await fetch(`/api/affiliates/${selectedAffiliate}/payment`, {
+      const token = localStorage.getItem('adminToken');
+      
+      // Enregistrer le paiement
+      const response = await fetch(`/api/affiliates/${selectedAffiliate}/pay`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          amount: parseFloat(paymentAmount),
-          crypto: paymentCrypto,
-          note: paymentNote || 'Paiement hebdomadaire'
+          amount: amount,
+          paymentMethod: paymentCrypto, // On envoie la crypto comme paymentMethod
+          transactionId: transactionId || null,
+          note: paymentNote || 'Paiement commission'
         })
       });
 
@@ -99,11 +119,13 @@ export default function AdminPayments() {
         setPaymentAmount('');
         setPaymentCrypto('USDT');
         setPaymentNote('');
+        setTransactionId('');
         setShowNewPayment(false);
         
         alert('Paiement enregistré avec succès !');
       } else {
-        alert('Erreur lors de l\'enregistrement du paiement');
+        const error = await response.json();
+        alert(error.message || 'Erreur lors de l\'enregistrement du paiement');
       }
     } catch (error) {
       console.error('Erreur:', error);
@@ -111,16 +133,18 @@ export default function AdminPayments() {
     }
   };
 
-  const handleDeletePayment = async (paymentId, affiliateId, amount) => {
-    if (!confirm(`Êtes-vous sûr de vouloir supprimer ce paiement de ${formatCurrency(amount)} ?\n\nCette action va :\n- Supprimer le paiement de l'historique\n- Remettre le montant en "commission en attente"`)) {
+  const handleDeletePayment = async (paymentId) => {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer ce paiement ?\n\nCette action est irréversible.')) {
       return;
     }
 
     try {
+      const token = localStorage.getItem('adminToken');
+      
       const response = await fetch(`/api/payments/${paymentId}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+          'Authorization': `Bearer ${token}`
         }
       });
 
@@ -146,8 +170,8 @@ export default function AdminPayments() {
     );
   }
 
-  const totalPaid = payments.reduce((sum, p) => sum + p.amount, 0);
-  const totalPending = affiliates.reduce((sum, a) => sum + (a.pendingAmount || 0), 0);
+  const totalPaid = payments.reduce((sum, p) => sum + parseFloat(p.amount), 0);
+  const totalPending = affiliates.reduce((sum, a) => sum + parseFloat(a.pendingAmount || 0), 0);
 
   return (
     <>
@@ -157,13 +181,11 @@ export default function AdminPayments() {
       </Head>
 
       <main className="admin-dashboard">
-        {/* Header Admin avec stats intégrées */}
         <AdminHeader currentPage="payments" />
 
-        {/* Contenu principal */}
         <div className="dashboard-content">
           <div className="container">
-            {/* Titre et bouton de nettoyage */}
+            {/* Titre */}
             <div style={{
               display: 'flex',
               justifyContent: 'space-between',
@@ -276,14 +298,20 @@ export default function AdminPayments() {
                 <h3 style={{color: '#14532d', marginBottom: '20px'}}>
                   💳 Enregistrer un nouveau paiement
                 </h3>
-                <div style={{display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 2fr', gap: '20px'}}>
+                <div style={{display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px'}}>
                   <div>
                     <label style={{display: 'block', marginBottom: '8px', color: '#15803d', fontWeight: '600'}}>
                       Sélectionner l'affilié
                     </label>
                     <select
                       value={selectedAffiliate}
-                      onChange={(e) => setSelectedAffiliate(e.target.value)}
+                      onChange={(e) => {
+                        setSelectedAffiliate(e.target.value);
+                        const affiliate = affiliates.find(a => a.id === e.target.value);
+                        if (affiliate) {
+                          setPaymentAmount(affiliate.pendingAmount.toString());
+                        }
+                      }}
                       style={{
                         width: '100%',
                         padding: '10px',
@@ -293,31 +321,24 @@ export default function AdminPayments() {
                         background: 'white'
                       }}
                     >
-                      <option value="">-- Choisir --</option>
-                      {affiliates && affiliates.length > 0 ? (
-                        affiliates.filter(a => a.isConfirmed && a.pendingAmount > 0).map(affiliate => (
-                          <option key={affiliate.id} value={affiliate.id}>
-                            {affiliate.pseudoReal} ({formatCurrency(affiliate.pendingAmount)} en attente)
-                          </option>
-                        ))
-                      ) : (
-                        <option disabled>Aucun affilié confirmé avec montant en attente</option>
-                      )}
-                      {affiliates && affiliates.filter(a => a.isConfirmed).length === 0 && (
-                        <option disabled>Aucun affilié confirmé</option>
-                      )}
+                      <option value="">-- Choisir un affilié --</option>
+                      {affiliates.filter(a => a.pendingAmount > 0).map(affiliate => (
+                        <option key={affiliate.id} value={affiliate.id}>
+                          {affiliate.name} ({formatCurrency(affiliate.pendingAmount)} en attente)
+                        </option>
+                      ))}
                     </select>
                   </div>
                   <div>
                     <label style={{display: 'block', marginBottom: '8px', color: '#15803d', fontWeight: '600'}}>
-                      Montant
+                      Montant à payer
                     </label>
                     <input
                       type="number"
                       step="0.01"
                       value={paymentAmount}
                       onChange={(e) => setPaymentAmount(e.target.value)}
-                      placeholder="Ex: 100.00"
+                      placeholder="0.00"
                       style={{
                         width: '100%',
                         padding: '10px',
@@ -329,7 +350,7 @@ export default function AdminPayments() {
                   </div>
                   <div>
                     <label style={{display: 'block', marginBottom: '8px', color: '#15803d', fontWeight: '600'}}>
-                      Crypto
+                      Crypto utilisée
                     </label>
                     <select
                       value={paymentCrypto}
@@ -343,27 +364,42 @@ export default function AdminPayments() {
                         background: 'white'
                       }}
                     >
-                      <option value="USDT">USDT</option>
-                      <option value="BTC">BTC</option>
-                      <option value="ETH">ETH</option>
-                      <option value="LTC">LTC</option>
-                      <option value="DOGE">DOGE</option>
-                      <option value="TRX">TRX</option>
-                      <option value="XRP">XRP</option>
-                      <option value="BNB">BNB</option>
-                      <option value="USDC">USDC</option>
-                      <option value="APE">APE</option>
-                      <option value="BUSD">BUSD</option>
-                      <option value="CRO">CRO</option>
-                      <option value="DAI">DAI</option>
-                      <option value="LINK">LINK</option>
-                      <option value="SAND">SAND</option>
-                      <option value="SHIB">SHIB</option>
-                      <option value="UNI">UNI</option>
-                      <option value="MATIC">MATIC</option>
+                      <option value="USDT">USDT (Tether)</option>
+                      <option value="BTC">BTC (Bitcoin)</option>
+                      <option value="ETH">ETH (Ethereum)</option>
+                      <option value="LTC">LTC (Litecoin)</option>
+                      <option value="DOGE">DOGE (Dogecoin)</option>
+                      <option value="TRX">TRX (Tron)</option>
+                      <option value="XRP">XRP (Ripple)</option>
+                      <option value="BNB">BNB (Binance Coin)</option>
+                      <option value="USDC">USDC (USD Coin)</option>
+                      <option value="MATIC">MATIC (Polygon)</option>
+                      <option value="SOL">SOL (Solana)</option>
+                      <option value="ADA">ADA (Cardano)</option>
+                      <option value="AVAX">AVAX (Avalanche)</option>
+                      <option value="DOT">DOT (Polkadot)</option>
+                      <option value="TON">TON (Toncoin)</option>
                     </select>
                   </div>
                   <div>
+                    <label style={{display: 'block', marginBottom: '8px', color: '#15803d', fontWeight: '600'}}>
+                      ID de transaction (optionnel)
+                    </label>
+                    <input
+                      type="text"
+                      value={transactionId}
+                      onChange={(e) => setTransactionId(e.target.value)}
+                      placeholder="Ex: 0x123..."
+                      style={{
+                        width: '100%',
+                        padding: '10px',
+                        borderRadius: '8px',
+                        border: '2px solid #16a34a',
+                        fontSize: '16px'
+                      }}
+                    />
+                  </div>
+                  <div style={{gridColumn: 'span 2'}}>
                     <label style={{display: 'block', marginBottom: '8px', color: '#15803d', fontWeight: '600'}}>
                       Note (optionnel)
                     </label>
@@ -371,7 +407,7 @@ export default function AdminPayments() {
                       type="text"
                       value={paymentNote}
                       onChange={(e) => setPaymentNote(e.target.value)}
-                      placeholder="Ex: Paiement hebdomadaire"
+                      placeholder="Ex: Paiement hebdomadaire semaine 45"
                       style={{
                         width: '100%',
                         padding: '10px',
@@ -399,7 +435,14 @@ export default function AdminPayments() {
                     ✅ Confirmer le paiement
                   </button>
                   <button
-                    onClick={() => setShowNewPayment(false)}
+                    onClick={() => {
+                      setShowNewPayment(false);
+                      setSelectedAffiliate('');
+                      setPaymentAmount('');
+                      setPaymentCrypto('USDT');
+                      setPaymentNote('');
+                      setTransactionId('');
+                    }}
                     style={{
                       background: '#dc2626',
                       color: 'white',
@@ -418,7 +461,7 @@ export default function AdminPayments() {
             )}
 
             {/* Affiliés avec paiements en attente */}
-            {affiliates && affiliates.filter(a => a.pendingAmount > 0).length > 0 && (
+            {affiliates.filter(a => a.pendingAmount > 0).length > 0 && (
               <div style={{marginBottom: '40px'}}>
                 <h2 style={{fontSize: '20px', marginBottom: '20px', color: '#1a2c38'}}>
                   Affiliés avec commissions en attente
@@ -436,17 +479,15 @@ export default function AdminPayments() {
                     }}>
                       <div>
                         <h4 style={{margin: '0 0 5px 0', color: '#1a2c38'}}>
-                          {affiliate.isConfirmed ? affiliate.pseudoReal : affiliate.pseudoMasked}
-                          {!affiliate.isConfirmed && (
-                            <span style={{
-                              marginLeft: '10px',
-                              fontSize: '12px',
-                              color: '#dc2626',
-                              fontStyle: 'italic'
-                            }}>
-                              (Pseudo non confirmé)
-                            </span>
-                          )}
+                          {affiliate.name}
+                          <span style={{
+                            marginLeft: '10px',
+                            fontSize: '14px',
+                            color: '#64748b',
+                            fontWeight: 'normal'
+                          }}>
+                            ({affiliate.stakeUsername})
+                          </span>
                         </h4>
                         <p style={{margin: 0, color: '#64748b', fontSize: '14px'}}>
                           Montant en attente
@@ -484,29 +525,34 @@ export default function AdminPayments() {
                         <th style={{padding: '15px', textAlign: 'left', color: '#64748b', fontWeight: '600'}}>Crypto</th>
                         <th style={{padding: '15px', textAlign: 'left', color: '#64748b', fontWeight: '600'}}>Transaction ID</th>
                         <th style={{padding: '15px', textAlign: 'left', color: '#64748b', fontWeight: '600'}}>Note</th>
-                        <th style={{padding: '15px', textAlign: 'left', color: '#64748b', fontWeight: '600'}}>Statut</th>
                         <th style={{padding: '15px', textAlign: 'center', color: '#64748b', fontWeight: '600'}}>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {payments.map((payment, index) => (
+                      {payments.map((payment) => (
                         <tr key={payment.id} style={{borderBottom: '1px solid #f1f5f9'}}>
                           <td style={{padding: '15px', color: '#1a2c38'}}>
-                            {formatDate(payment.createdAt)}
+                            {formatDate(payment.paidAt)}
                           </td>
                           <td style={{padding: '15px', color: '#1a2c38', fontWeight: '600'}}>
-                            {payment.affiliate?.pseudoReal || payment.affiliate?.pseudoMasked || 'N/A'}
+                            {payment.affiliate?.name || 'N/A'}
                           </td>
                           <td style={{padding: '15px', color: '#16a34a', fontWeight: '700'}}>
                             {formatCurrency(payment.amount)}
                           </td>
                           <td style={{padding: '15px'}}>
                             <span style={{
-                              background: payment.crypto === 'BTC' ? '#f7931a' : 
-                                         payment.crypto === 'ETH' ? '#627eea' :
-                                         payment.crypto === 'USDT' ? '#26a17b' :
-                                         payment.crypto === 'LTC' ? '#345d9d' :
-                                         payment.crypto === 'DOGE' ? '#c2a633' :
+                              background: payment.paymentMethod === 'BTC' ? '#f7931a' : 
+                                         payment.paymentMethod === 'ETH' ? '#627eea' :
+                                         payment.paymentMethod === 'USDT' ? '#26a17b' :
+                                         payment.paymentMethod === 'LTC' ? '#345d9d' :
+                                         payment.paymentMethod === 'DOGE' ? '#c2a633' :
+                                         payment.paymentMethod === 'TRX' ? '#eb0029' :
+                                         payment.paymentMethod === 'XRP' ? '#23292f' :
+                                         payment.paymentMethod === 'BNB' ? '#f3ba2f' :
+                                         payment.paymentMethod === 'USDC' ? '#2775ca' :
+                                         payment.paymentMethod === 'MATIC' ? '#8247e5' :
+                                         payment.paymentMethod === 'SOL' ? '#14f195' :
                                          '#4a9eff',
                               color: 'white',
                               padding: '4px 10px',
@@ -514,30 +560,18 @@ export default function AdminPayments() {
                               fontSize: '12px',
                               fontWeight: '600'
                             }}>
-                              {payment.crypto || 'USDT'}
+                              {payment.paymentMethod || 'USDT'}
                             </span>
                           </td>
                           <td style={{padding: '15px', color: '#64748b', fontFamily: 'monospace', fontSize: '14px'}}>
-                            {payment.transactionId}
+                            {payment.transactionId || '-'}
                           </td>
                           <td style={{padding: '15px', color: '#64748b'}}>
-                            {payment.note}
-                          </td>
-                          <td style={{padding: '15px'}}>
-                            <span style={{
-                              background: '#dcfce7',
-                              color: '#16a34a',
-                              padding: '4px 12px',
-                              borderRadius: '20px',
-                              fontSize: '12px',
-                              fontWeight: '600'
-                            }}>
-                              ✓ Complété
-                            </span>
+                            {payment.note || '-'}
                           </td>
                           <td style={{padding: '15px', textAlign: 'center'}}>
                             <button
-                              onClick={() => handleDeletePayment(payment.id, payment.affiliateId, payment.amount)}
+                              onClick={() => handleDeletePayment(payment.id)}
                               style={{
                                 background: '#fee2e2',
                                 color: '#dc2626',

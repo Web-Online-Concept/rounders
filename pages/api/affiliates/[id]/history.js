@@ -17,7 +17,7 @@ async function verifyAdminToken(token) {
 }
 
 export default async function handler(req, res) {
-  if (req.method !== 'DELETE') {
+  if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
@@ -33,44 +33,36 @@ export default async function handler(req, res) {
 
     const { id } = req.query;
 
-    // Récupérer le paiement avec les infos de l'affilié
-    const payment = await prisma.payment.findUnique({
-      where: { id },
-      include: {
-        affiliate: true
+    // Récupérer l'historique des commissions
+    const history = await prisma.commissionHistory.findMany({
+      where: {
+        affiliateId: id
+      },
+      orderBy: {
+        calculatedAt: 'desc'
       }
     });
 
-    if (!payment) {
-      return res.status(404).json({ error: 'Paiement introuvable' });
-    }
-
-    console.log(`🗑️ Suppression du paiement ${id} de ${payment.amount}€`);
-
-    // Supprimer le paiement
-    await prisma.payment.delete({
-      where: { id }
-    });
-
-    // Log système
-    await prisma.systemLog.create({
-      data: {
-        action: 'PAYMENT_DELETED',
-        details: `Paiement de ${payment.amount}€ supprimé pour ${payment.affiliate.name}`
+    // Récupérer les paiements
+    const payments = await prisma.payment.findMany({
+      where: {
+        affiliateId: id
+      },
+      orderBy: {
+        paidAt: 'desc'
       }
     });
-
-    console.log(`✅ Paiement supprimé avec succès`);
 
     return res.status(200).json({
       success: true,
-      message: 'Paiement supprimé avec succès'
+      history,
+      payments
     });
 
   } catch (error) {
-    console.error('❌ Erreur lors de la suppression:', error);
+    console.error('Erreur lors de la récupération de l\'historique:', error);
     return res.status(500).json({ 
-      error: 'Erreur lors de la suppression du paiement',
+      error: 'Erreur lors de la récupération de l\'historique',
       details: error.message 
     });
   } finally {

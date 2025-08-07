@@ -29,7 +29,7 @@ export default async function handler(req, res) {
   }
 
   const { id } = req.query;
-  const { amount, crypto = 'USDT', note = 'Paiement hebdomadaire' } = req.body;
+  const { amount, crypto = 'USDT', transactionId, note = 'Paiement hebdomadaire' } = req.body;
 
   try {
     // Récupérer l'affilié
@@ -41,48 +41,48 @@ export default async function handler(req, res) {
       return res.status(404).json({ error: 'Affilié non trouvé' });
     }
 
+    const paymentAmount = parseFloat(amount || affiliate.pendingAmount || 0);
+    
+    if (paymentAmount <= 0) {
+      return res.status(400).json({ error: 'Montant invalide' });
+    }
+
     // Créer le paiement
     const payment = await prisma.payment.create({
       data: {
         affiliateId: id,
-        amount: parseFloat(amount || 0),
+        amount: paymentAmount,
         crypto,
+        transactionId: transactionId || `PAY-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
         note,
-        transactionId: `TIP-${Date.now()}-${Math.floor(Math.random() * 1000)}`
+        paidAt: new Date()
       }
     });
 
     // Mettre à jour l'affilié
+    // IMPORTANT : on enregistre la commission actuelle comme nouveau point de référence
     await prisma.affiliate.update({
       where: { id },
       data: {
-        pendingAmount: {
-          decrement: parseFloat(amount || 0)
-        },
+        pendingAmount: 0, // Repart à 0
         paidAmount: {
-          increment: parseFloat(amount || 0)
+          increment: paymentAmount // Ajoute au total payé
         },
+        lastPaidCommission: affiliate.currentCommission, // Nouveau point de référence
         lastPaymentDate: new Date(),
         lastUpdate: new Date()
       }
     });
 
-    // Marquer les commissions comme payées
-    await prisma.commission.updateMany({
-      where: {
-        affiliateId: id,
-        isPaid: false
-      },
-      data: {
-        isPaid: true,
-        paidAt: new Date()
-      }
-    });
+    // Log pour traçabilité
+    console.log(`💰 Paiement enregistré pour ${affiliate.pseudoReal || affiliate.pseudoMasked}:`);
+    console.log(`   - Montant: ${paymentAmount}€`);
+    console.log(`   - Nouvelle référence commission: ${affiliate.currentCommission}€`);
 
     return res.status(200).json({ 
       success: true,
       payment,
-      message: `Paiement de ${amount}€ enregistré`
+      message: `Paiement de ${paymentAmount}€ enregistré. Les commissions repartent maintenant de ${affiliate.currentCommission}€.`
     });
 
   } catch (error) {

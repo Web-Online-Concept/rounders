@@ -9,7 +9,6 @@ async function verifyAdminToken(token) {
   
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
-    // Accepter les deux formats : role === 'ADMIN' OU isAdmin === true
     return decoded.role === 'ADMIN' || decoded.isAdmin === true;
   } catch (error) {
     return false;
@@ -31,38 +30,34 @@ export default async function handler(req, res) {
       return res.status(401).json({ error: 'Non autorisé' });
     }
 
-    // Récupérer tous les paiements avec les infos des affiliés
-    const payments = await prisma.payment.findMany({
-      include: {
-        affiliate: {
-          select: {
-            id: true,
-            name: true,
-            stakeUsername: true,
-            email: true
-          }
-        }
-      },
-      orderBy: {
-        paidAt: 'desc'
-      }
+    const { id } = req.query;
+
+    // Récupérer l'affilié
+    const affiliate = await prisma.affiliate.findUnique({
+      where: { id }
     });
 
-    // Transformer les montants en nombres
-    const paymentsData = payments.map(payment => ({
-      ...payment,
-      amount: parseFloat(payment.amount)
-    }));
+    if (!affiliate) {
+      return res.status(404).json({ error: 'Affilié introuvable' });
+    }
 
-    return res.status(200).json({
-      success: true,
-      payments: paymentsData
-    });
+    // Convertir toutes les valeurs Decimal en nombres
+    const affiliateData = {
+      ...affiliate,
+      startingCommission: parseFloat(affiliate.startingCommission || 0),
+      lastPaidCommission: parseFloat(affiliate.lastPaidCommission || 0),
+      currentCommission: parseFloat(affiliate.currentCommission || 0),
+      currentTotalBet: parseFloat(affiliate.currentTotalBet || 0),
+      pendingAmount: parseFloat(affiliate.pendingAmount || 0),
+      paidAmount: parseFloat(affiliate.paidAmount || 0)
+    };
+
+    return res.status(200).json(affiliateData);
 
   } catch (error) {
-    console.error('Erreur lors de la récupération des paiements:', error);
+    console.error('Erreur lors de la récupération de l\'affilié:', error);
     return res.status(500).json({ 
-      error: 'Erreur lors de la récupération des paiements',
+      error: 'Erreur lors de la récupération de l\'affilié',
       details: error.message 
     });
   } finally {
