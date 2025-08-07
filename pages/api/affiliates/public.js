@@ -1,16 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 
-// Créer une instance unique de Prisma pour la production
-let prisma;
-
-if (process.env.NODE_ENV === 'production') {
-  prisma = new PrismaClient();
-} else {
-  if (!global.prisma) {
-    global.prisma = new PrismaClient();
-  }
-  prisma = global.prisma;
-}
+const prisma = new PrismaClient();
 
 // Fonction pour masquer le pseudo
 function maskUsername(username) {
@@ -19,18 +9,11 @@ function maskUsername(username) {
 }
 
 export default async function handler(req, res) {
-  // Définir les headers CORS si nécessaire
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET');
-  res.setHeader('Content-Type', 'application/json');
-
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    console.log('API publique affiliés appelée');
-    
     // Récupérer tous les affiliés actifs
     const affiliates = await prisma.affiliate.findMany({
       where: {
@@ -40,8 +23,6 @@ export default async function handler(req, res) {
         createdAt: 'desc'
       }
     });
-
-    console.log(`${affiliates.length} affiliés trouvés`);
 
     // Transformer pour la page publique avec tous les champs nécessaires
     const publicData = affiliates.map(aff => {
@@ -72,13 +53,11 @@ export default async function handler(req, res) {
 
   } catch (error) {
     console.error('Erreur API affiliates publique:', error);
-    console.error('Stack:', error.stack);
-    
-    // Retourner une réponse d'erreur plus détaillée
     return res.status(500).json({ 
       error: 'Erreur serveur',
-      message: process.env.NODE_ENV === 'development' ? error.message : 'Une erreur est survenue',
-      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      details: error.message 
     });
+  } finally {
+    await prisma.$disconnect();
   }
 }
