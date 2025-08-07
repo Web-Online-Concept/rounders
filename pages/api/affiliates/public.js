@@ -24,15 +24,20 @@ export default async function handler(req, res) {
       }
     });
 
-    // Transformer pour la page publique
+    // Transformer pour la page publique avec les bons noms de champs
     const publicData = affiliates.map(aff => ({
       id: aff.id,
-      pseudoMasked: maskUsername(aff.stakeUsername),
+      username: maskUsername(aff.stakeUsername), // La page cherche 'username'
+      pseudoMasked: maskUsername(aff.stakeUsername), // Pour compatibilité
       totalBet: parseFloat(aff.currentTotalBet || 0),
       totalCommission: parseFloat(aff.currentCommission || 0),
+      commission: parseFloat(aff.currentCommission || 0), // La page cherche 'commission'
       paidAmount: parseFloat(aff.paidAmount || 0),
+      paid: parseFloat(aff.paidAmount || 0), // La page cherche 'paid'
       pendingAmount: parseFloat(aff.pendingAmount || 0),
+      pending: parseFloat(aff.pendingAmount || 0), // La page cherche 'pending'
       registrationDate: aff.createdAt,
+      joinedAt: aff.createdAt, // La page cherche 'joinedAt'
       lastUpdate: aff.lastUpdated
     }));
 
