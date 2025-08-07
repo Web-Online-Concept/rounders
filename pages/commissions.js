@@ -258,8 +258,13 @@ export default function CommissionsPage() {
         /* Hero Section */
         .hero-section {
           background: linear-gradient(135deg, #1a2c38 0%, #2d4356 100%);
-          padding: 80px 20px;
+          padding: 60px 20px;
           text-align: center;
+          min-height: 400px;
+          height: 400px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
 
         .hero-title {
@@ -366,7 +371,7 @@ export default function CommissionsPage() {
           font-size: 0.875rem;
         }
 
-        /* Affiliates Section - MÊME FOND QUE LES STATS */
+        /* Affiliates Section */
         .affiliates-section {
           padding: 40px 20px;
           background: #f8fafc;
@@ -562,7 +567,100 @@ export default function CommissionsPage() {
           padding: 40px;
         }
 
+        /* CORRECTIONS MOBILE */
         @media (max-width: 768px) {
+          /* Hero mobile */
+          .hero-section {
+            padding: 40px 20px;
+            min-height: 300px;
+            height: auto;
+          }
+          
+          .hero-title {
+            font-size: 1.8rem;
+          }
+          
+          .hero-subtitle {
+            font-size: 1rem;
+          }
+
+          .hero-cta p {
+            font-size: 1rem;
+          }
+
+          .cta-button {
+            padding: 12px 24px;
+            font-size: 0.9rem;
+          }
+          
+          /* Stats mobile */
+          .global-stats {
+            grid-template-columns: repeat(2, 1fr);
+          }
+
+          .stat-card {
+            padding: 15px;
+          }
+
+          .stat-icon {
+            font-size: 2rem;
+          }
+
+          .stat-content h3 {
+            font-size: 0.75rem;
+          }
+
+          .stat-value {
+            font-size: 1.2rem;
+          }
+          
+          /* Affiliés mobile */
+          .section-title {
+            font-size: 1.5rem;
+          }
+
+          .affiliate-card {
+            padding: 15px;
+          }
+
+          .affiliate-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+          }
+          
+          .affiliate-header h3 {
+            font-size: 1rem;
+          }
+          
+          .join-date {
+            font-size: 0.75rem;
+          }
+
+          /* Stats affiliés en 2 colonnes sur mobile */
+          .affiliate-stats {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+          }
+          
+          .stat-item .label {
+            font-size: 0.75rem;
+          }
+          
+          .stat-item .value {
+            font-size: 0.9rem;
+          }
+
+          .view-details {
+            font-size: 0.8rem;
+            margin-top: 10px;
+          }
+          
+          /* Modal mobile */
+          .modal-content {
+            padding: 20px;
+          }
+
           .modal-stats {
             grid-template-columns: repeat(2, 1fr);
           }
