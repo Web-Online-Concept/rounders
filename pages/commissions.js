@@ -575,11 +575,7 @@ export default function CommissionsPage() {
 
         /* CORRECTIONS MOBILE - IDENTIQUES À AFFILIATION */
         @media (max-width: 768px) {
-          /* Hero mobile - HAUTEUR FIXE COMME AFFILIATION */
-          .hero-section {
-            min-height: 300px !important;
-            height: 300px !important;
-          }
+          /* Hero mobile - PAS DE CHANGEMENT DE HAUTEUR */
           
           .hero-title {
             font-size: 1.8rem;
