@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "prisma:generate": "prisma generate",
@@ -12,7 +12,8 @@
     "prisma:push": "prisma db push",
     "prisma:studio": "prisma studio",
     "prisma:seed": "node prisma/seed.js",
-    "generate-password": "node scripts/generate-password.js"
+    "generate-password": "node scripts/generate-password.js",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
