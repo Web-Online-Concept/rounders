@@ -14,10 +14,18 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Récupérer tous les affiliés actifs
+    // Récupérer tous les affiliés actifs avec leur dernier paiement
     const affiliates = await prisma.affiliate.findMany({
       where: {
         isActive: true
+      },
+      include: {
+        payments: {
+          orderBy: {
+            paidAt: 'desc'
+          },
+          take: 1
+        }
       },
       orderBy: {
         createdAt: 'desc'
@@ -27,6 +35,8 @@ export default async function handler(req, res) {
     // Transformer pour la page publique avec tous les champs nécessaires
     const publicData = affiliates.map(aff => {
       const maskedUsername = maskUsername(aff.stakeUsername);
+      const lastPayment = aff.payments[0];
+      
       return {
         id: aff.id,
         username: maskedUsername,
@@ -36,12 +46,16 @@ export default async function handler(req, res) {
         commission: parseFloat(aff.currentCommission || 0),
         paidAmount: parseFloat(aff.paidAmount || 0),
         paid: parseFloat(aff.paidAmount || 0),
-        pendingAmount: parseFloat(aff.pendingAmount || 0),
-        pending: parseFloat(aff.pendingAmount || 0),
+        // Pour la compatibilité, on garde pendingAmount mais à 0
+        pendingAmount: 0,
+        pending: 0,
+        // Infos du dernier paiement
+        lastPaymentAmount: lastPayment ? parseFloat(lastPayment.amount) : null,
+        lastPaymentDate: lastPayment ? lastPayment.paidAt : null,
         registrationDate: aff.createdAt,
         joinedAt: aff.createdAt,
         createdAt: aff.createdAt,
-        lastUpdate: aff.lastUpdated || aff.updatedAt
+        lastUpdate: aff.lastUpdated || aff.createdAt
       };
     });
 

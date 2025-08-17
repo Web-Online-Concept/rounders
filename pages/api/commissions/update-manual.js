@@ -41,6 +41,7 @@ export default async function handler(req, res) {
 
     let updatedCount = 0;
     const errors = [];
+    const paymentsToMake = []; // Liste des paiements à effectuer
 
     // Traiter chaque mise à jour
     for (const update of updates) {
@@ -67,21 +68,19 @@ export default async function handler(req, res) {
         console.log(`   Dernière payée: ${lastPaidCommission}€`);
         console.log(`   Différence: ${commissionDifference}€`);
 
+        // Mettre à jour les valeurs actuelles (toujours)
+        await prisma.affiliate.update({
+          where: { id: affiliateId },
+          data: {
+            currentTotalBet: totalBet,
+            currentCommission: newCommission,
+            lastUpdated: new Date()
+          }
+        });
+
+        // Si différence positive, préparer le paiement
         if (commissionDifference > 0) {
           const affiliateShare = commissionDifference * 0.5; // 50%
-
-          // Mettre à jour l'affilié
-          await prisma.affiliate.update({
-            where: { id: affiliateId },
-            data: {
-              currentTotalBet: totalBet,
-              currentCommission: newCommission,
-              pendingAmount: {
-                increment: affiliateShare
-              },
-              lastUpdated: new Date()
-            }
-          });
 
           // Créer un historique
           await prisma.commissionHistory.create({
@@ -98,19 +97,19 @@ export default async function handler(req, res) {
             }
           });
 
-          updatedCount++;
-          console.log(`✅ ${affiliate.name}: +${affiliateShare.toFixed(2)}€ ajouté`);
-        } else if (totalBet !== affiliate.currentTotalBet || newCommission !== affiliate.currentCommission) {
-          // Mettre à jour les valeurs même sans nouvelle commission
-          await prisma.affiliate.update({
-            where: { id: affiliateId },
-            data: {
-              currentTotalBet: totalBet,
-              currentCommission: newCommission,
-              lastUpdated: new Date()
-            }
+          // Ajouter à la liste des paiements à faire
+          paymentsToMake.push({
+            affiliateId: affiliate.id,
+            affiliateName: affiliate.name,
+            affiliateEmail: affiliate.email,
+            amount: affiliateShare,
+            commission: newCommission,
+            difference: commissionDifference
           });
 
+          updatedCount++;
+          console.log(`✅ ${affiliate.name}: ${affiliateShare.toFixed(2)}€ à payer`);
+        } else {
           updatedCount++;
           console.log(`✅ ${affiliate.name}: Valeurs mises à jour (pas de nouvelle commission)`);
         }
@@ -125,17 +124,19 @@ export default async function handler(req, res) {
     await prisma.systemLog.create({
       data: {
         action: 'MANUAL_UPDATE',
-        details: `Mise à jour manuelle de ${updatedCount} affiliés`,
+        details: `Mise à jour manuelle de ${updatedCount} affiliés - ${paymentsToMake.length} paiements à effectuer`,
         createdAt: new Date()
       }
     });
 
     console.log(`\n✅ Mise à jour terminée: ${updatedCount}/${updates.length} affiliés traités`);
+    console.log(`💰 ${paymentsToMake.length} paiements à effectuer`);
 
     return res.status(200).json({
       success: true,
       message: 'Mise à jour réussie',
       updated: updatedCount,
+      paymentsToMake: paymentsToMake, // Retourner la liste des paiements
       errors: errors.length > 0 ? errors : undefined
     });
 

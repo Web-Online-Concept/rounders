@@ -10,7 +10,6 @@ export default function CommissionsPage() {
     totalAffiliates: 0,
     totalCommission: 0,
     totalBet: 0,
-    totalPending: 0,
     totalPaid: 0,
     lastUpdate: null
   });
@@ -35,8 +34,9 @@ export default function CommissionsPage() {
           username: aff.pseudoMasked || '***',
           commission: aff.totalCommission || 0,
           totalBet: aff.totalBet || 0,
-          pending: aff.pendingAmount || 0,
           paid: aff.paidAmount || 0,
+          lastPaymentAmount: aff.lastPaymentAmount,
+          lastPaymentDate: aff.lastPaymentDate,
           joinedAt: aff.registrationDate || aff.createdAt,
           lastUpdate: aff.lastUpdate || null
         })));
@@ -45,7 +45,6 @@ export default function CommissionsPage() {
           totalAffiliates: affiliatesData.length,
           totalCommission: affiliatesData.reduce((sum, aff) => sum + (aff.totalCommission || 0), 0),
           totalBet: affiliatesData.reduce((sum, aff) => sum + (aff.totalBet || 0), 0),
-          totalPending: affiliatesData.reduce((sum, aff) => sum + (aff.pendingAmount || 0), 0),
           totalPaid: affiliatesData.reduce((sum, aff) => sum + (aff.paidAmount || 0), 0),
           lastUpdate: new Date()
         });
@@ -84,6 +83,15 @@ export default function CommissionsPage() {
       year: '2-digit',
       hour: '2-digit',
       minute: '2-digit'
+    });
+  };
+
+  const formatDateShort = (date) => {
+    if (!date) return 'N/A';
+    return new Date(date).toLocaleDateString('fr-FR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: '2-digit'
     });
   };
 
@@ -149,10 +157,10 @@ export default function CommissionsPage() {
                 </div>
               </div>
               <div className="stat-card">
-                <div className="stat-icon">⏳</div>
+                <div className="stat-icon">🎯</div>
                 <div className="stat-content">
-                  <h3>{t.commissions.stats.pending}</h3>
-                  <p className="stat-value orange">{formatCurrency(stats.totalPending)}</p>
+                  <h3>Total Misé</h3>
+                  <p className="stat-value">{formatCurrency(stats.totalBet)}</p>
                 </div>
               </div>
             </div>
@@ -164,7 +172,8 @@ export default function CommissionsPage() {
             )}
           </div>
         </section>
-{/* Affiliates List */}
+
+        {/* Affiliates List */}
         <section className="affiliates-section">
           <div className="section-container">
             <h2 className="section-title">{t.commissions.table.title}</h2>
@@ -199,12 +208,23 @@ export default function CommissionsPage() {
                         <span className="value">{formatCurrency(affiliate.commission)}</span>
                       </div>
                       <div className="stat-item">
-                        <span className="label">{t.commissions.table.paid}</span>
+                        <span className="label">Total Reversé</span>
                         <span className="value green">{formatCurrency(affiliate.paid)}</span>
                       </div>
                       <div className="stat-item">
-                        <span className="label">{t.commissions.table.pending}</span>
-                        <span className="value orange">{formatCurrency(affiliate.pending)}</span>
+                        <span className="label">Dernier Paiement</span>
+                        <span className="value blue">
+                          {affiliate.lastPaymentAmount ? (
+                            <>
+                              {formatCurrency(affiliate.lastPaymentAmount)}
+                              <small className="payment-date">
+                                le {formatDateShort(affiliate.lastPaymentDate)}
+                              </small>
+                            </>
+                          ) : (
+                            <span className="no-payment">-</span>
+                          )}
+                        </span>
                       </div>
                     </div>
                     <div className="view-details">
@@ -239,12 +259,17 @@ export default function CommissionsPage() {
                     <strong>{formatCurrency(selectedAffiliate.affiliate.commission)}</strong>
                   </div>
                   <div>
-                    <span>{t.commissions.table.paid}</span>
+                    <span>Total Reversé</span>
                     <strong className="green">{formatCurrency(selectedAffiliate.affiliate.paid)}</strong>
                   </div>
                   <div>
-                    <span>{t.commissions.table.pending}</span>
-                    <strong className="orange">{formatCurrency(selectedAffiliate.affiliate.pending)}</strong>
+                    <span>Dernier Paiement</span>
+                    <strong className="blue">
+                      {selectedAffiliate.affiliate.lastPaymentAmount 
+                        ? formatCurrency(selectedAffiliate.affiliate.lastPaymentAmount)
+                        : '-'
+                      }
+                    </strong>
                   </div>
                 </div>
               </div>
@@ -483,8 +508,23 @@ export default function CommissionsPage() {
           color: #00d632;
         }
 
-        .stat-item .value.orange {
-          color: #ffd700;
+        .stat-item .value.blue {
+          color: #60a5fa;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 2px;
+        }
+
+        .payment-date {
+          font-size: 0.75rem;
+          color: #94a3b8;
+          font-weight: normal;
+        }
+
+        .no-payment {
+          color: #94a3b8;
+          font-style: italic;
         }
 
         .view-details {
@@ -563,8 +603,8 @@ export default function CommissionsPage() {
           color: #16a34a;
         }
 
-        .modal-stats strong.orange {
-          color: #f59e0b;
+        .modal-stats strong.blue {
+          color: #4a9eff;
         }
 
         .no-data {
@@ -652,6 +692,10 @@ export default function CommissionsPage() {
             font-size: 0.9rem;
           }
 
+          .payment-date {
+            font-size: 0.7rem;
+          }
+
           .view-details {
             font-size: 0.8rem;
             margin-top: 10px;
@@ -669,4 +713,4 @@ export default function CommissionsPage() {
       `}</style>
     </>
   );
-}		
+}

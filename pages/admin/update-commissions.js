@@ -10,6 +10,9 @@ export default function UpdateCommissionsPage() {
   const [message, setMessage] = useState({ type: '', text: '' });
   const [formData, setFormData] = useState({});
   const [lastUpdate, setLastUpdate] = useState(null);
+  const [paymentsToMake, setPaymentsToMake] = useState([]);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [processingPayment, setProcessingPayment] = useState(null);
 
   useEffect(() => {
     checkAuthAndLoadData();
@@ -108,8 +111,7 @@ export default function UpdateCommissionsPage() {
 
     return {
       difference: difference,
-      affiliateShare: difference * 0.5,
-      newPending: (parseFloat(affiliate.pendingAmount) || 0) + (difference * 0.5)
+      affiliateShare: difference * 0.5
     };
   };
 
@@ -129,19 +131,17 @@ export default function UpdateCommissionsPage() {
           const totalBet = parseFloat(data.totalBet);
           const totalCommission = parseFloat(data.totalCommission);
           
-          // Seulement envoyer si les valeurs ont changé
-          if (totalBet !== affiliate.currentTotalBet || totalCommission !== affiliate.currentCommission) {
-            updates.push({
-              affiliateId: affiliate.id,
-              totalBet: totalBet,
-              totalCommission: totalCommission
-            });
-          }
+          // Toujours envoyer pour mettre à jour les valeurs
+          updates.push({
+            affiliateId: affiliate.id,
+            totalBet: totalBet,
+            totalCommission: totalCommission
+          });
         }
       });
 
       if (updates.length === 0) {
-        showMessage('warning', 'Aucune modification détectée');
+        showMessage('warning', 'Aucune donnée à traiter');
         setSaving(false);
         return;
       }
@@ -159,6 +159,13 @@ export default function UpdateCommissionsPage() {
 
       if (response.ok) {
         showMessage('success', `${result.updated} affiliés mis à jour avec succès !`);
+        
+        // Si il y a des paiements à faire, les afficher
+        if (result.paymentsToMake && result.paymentsToMake.length > 0) {
+          setPaymentsToMake(result.paymentsToMake);
+          setShowPaymentModal(true);
+        }
+        
         // Recharger les données
         await loadAffiliates();
       } else {
@@ -169,6 +176,45 @@ export default function UpdateCommissionsPage() {
       showMessage('error', 'Erreur lors de la mise à jour');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const confirmPayment = async (payment) => {
+    setProcessingPayment(payment.affiliateId);
+    
+    try {
+      const token = localStorage.getItem('adminToken');
+      const response = await fetch('/api/commissions/confirm-payment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          affiliateId: payment.affiliateId,
+          amount: payment.amount,
+          paymentMethod: 'CRYPTO'
+        })
+      });
+
+      if (response.ok) {
+        // Retirer de la liste
+        setPaymentsToMake(prev => prev.filter(p => p.affiliateId !== payment.affiliateId));
+        showMessage('success', `Paiement de ${payment.amount.toFixed(2)}€ confirmé pour ${payment.affiliateName}`);
+        
+        // Si plus de paiements, fermer le modal
+        if (paymentsToMake.length <= 1) {
+          setShowPaymentModal(false);
+        }
+      } else {
+        const error = await response.json();
+        showMessage('error', error.message || 'Erreur lors de la confirmation');
+      }
+    } catch (error) {
+      console.error('Erreur:', error);
+      showMessage('error', 'Erreur lors de la confirmation du paiement');
+    } finally {
+      setProcessingPayment(null);
     }
   };
 
@@ -211,7 +257,7 @@ export default function UpdateCommissionsPage() {
                 <th>Affilié</th>
                 <th>Total Misé (€)</th>
                 <th>Commission Totale (€)</th>
-                <th>Aperçu</th>
+                <th>À payer</th>
               </tr>
             </thead>
             <tbody>
@@ -251,10 +297,10 @@ export default function UpdateCommissionsPage() {
                       {preview ? (
                         <div className="preview-content">
                           <span className="new-commission">
-                            +{preview.affiliateShare.toFixed(2)}€
+                            {preview.affiliateShare.toFixed(2)}€
                           </span>
                           <small>
-                            Total: {preview.newPending.toFixed(2)}€
+                            (50% de {preview.difference.toFixed(2)}€)
                           </small>
                         </div>
                       ) : (
@@ -273,23 +319,71 @@ export default function UpdateCommissionsPage() {
               disabled={saving}
               className="submit-button"
             >
-              {saving ? '⏳ Mise à jour en cours...' : '💾 Mettre à jour les commissions'}
+              {saving ? '⏳ Calcul en cours...' : '💾 Calculer les paiements'}
             </button>
           </div>
         </div>
 
         <div className="info-box">
-          <h3>ℹ️ Comment ça marche :</h3>
+          <h3>ℹ️ Nouveau système simplifié :</h3>
           <ol>
-            <li>Allez sur Stake → Affiliate → Referred Users</li>
-            <li>Pour chaque affilié, copiez le "Total misé" et la "Commission totale"</li>
-            <li>Entrez ces valeurs dans les champs correspondants</li>
-            <li>L'aperçu vous montre la nouvelle commission qui sera ajoutée</li>
-            <li>Cliquez sur "Mettre à jour" pour enregistrer</li>
+            <li>Entrez les valeurs actuelles de Stake</li>
+            <li>Le système calcule automatiquement les paiements à faire (50% de la différence)</li>
+            <li>Payez immédiatement chaque affilié</li>
+            <li>Confirmez le paiement dans le système</li>
+            <li>Plus d'accumulation de montants en attente !</li>
           </ol>
-          <p><strong>Note :</strong> Les commissions sont calculées automatiquement (50% de la différence depuis le dernier paiement)</p>
+          <p><strong>Note :</strong> Les paiements sont traités immédiatement, il n'y a plus de montants en attente.</p>
         </div>
       </div>
+
+      {/* Modal des paiements */}
+      {showPaymentModal && paymentsToMake.length > 0 && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>💰 Paiements à effectuer</h2>
+            <p className="modal-info">
+              Effectuez ces paiements puis confirmez-les un par un :
+            </p>
+            
+            <div className="payments-list">
+              {paymentsToMake.map(payment => (
+                <div key={payment.affiliateId} className="payment-item">
+                  <div className="payment-info">
+                    <strong>{payment.affiliateName}</strong>
+                    {payment.affiliateEmail && (
+                      <small>{payment.affiliateEmail}</small>
+                    )}
+                    <div className="payment-details">
+                      Commission: {payment.commission.toFixed(2)}€ 
+                      <span className="difference">(+{payment.difference.toFixed(2)}€)</span>
+                    </div>
+                  </div>
+                  <div className="payment-amount">
+                    <span className="amount">{payment.amount.toFixed(2)}€</span>
+                    <button 
+                      className="confirm-button"
+                      onClick={() => confirmPayment(payment)}
+                      disabled={processingPayment === payment.affiliateId}
+                    >
+                      {processingPayment === payment.affiliateId ? '⏳' : '✅ Payé'}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="modal-actions">
+              <button 
+                className="close-button"
+                onClick={() => setShowPaymentModal(false)}
+              >
+                Fermer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <style jsx>{`
         .admin-page {
@@ -502,6 +596,132 @@ export default function UpdateCommissionsPage() {
           color: #666;
         }
 
+        /* Modal */
+        .modal-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.7);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 20px;
+          z-index: 1000;
+        }
+
+        .modal-content {
+          background: white;
+          border-radius: 12px;
+          max-width: 600px;
+          width: 100%;
+          max-height: 80vh;
+          overflow-y: auto;
+          padding: 30px;
+        }
+
+        .modal-content h2 {
+          margin: 0 0 10px 0;
+          color: #212529;
+        }
+
+        .modal-info {
+          color: #666;
+          margin-bottom: 20px;
+        }
+
+        .payments-list {
+          display: flex;
+          flex-direction: column;
+          gap: 15px;
+        }
+
+        .payment-item {
+          background: #f8f9fa;
+          border-radius: 8px;
+          padding: 15px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          border: 1px solid #e9ecef;
+        }
+
+        .payment-info strong {
+          display: block;
+          color: #212529;
+          margin-bottom: 2px;
+        }
+
+        .payment-info small {
+          display: block;
+          color: #6c757d;
+          font-size: 0.85rem;
+        }
+
+        .payment-details {
+          margin-top: 8px;
+          color: #495057;
+          font-size: 0.9rem;
+        }
+
+        .difference {
+          color: #28a745;
+          font-weight: 500;
+        }
+
+        .payment-amount {
+          display: flex;
+          align-items: center;
+          gap: 15px;
+        }
+
+        .amount {
+          font-size: 1.5rem;
+          font-weight: bold;
+          color: #28a745;
+        }
+
+        .confirm-button {
+          padding: 8px 16px;
+          background: #28a745;
+          color: white;
+          border: none;
+          border-radius: 6px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+
+        .confirm-button:hover:not(:disabled) {
+          background: #218838;
+        }
+
+        .confirm-button:disabled {
+          background: #ccc;
+          cursor: not-allowed;
+        }
+
+        .modal-actions {
+          margin-top: 30px;
+          text-align: center;
+        }
+
+        .close-button {
+          padding: 10px 30px;
+          background: #6c757d;
+          color: white;
+          border: none;
+          border-radius: 6px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+
+        .close-button:hover {
+          background: #5a6268;
+        }
+
         @media (max-width: 768px) {
           .update-container {
             padding: 10px;
@@ -522,6 +742,17 @@ export default function UpdateCommissionsPage() {
 
           .submit-button {
             width: 100%;
+          }
+
+          .payment-item {
+            flex-direction: column;
+            gap: 15px;
+            text-align: center;
+          }
+
+          .payment-amount {
+            width: 100%;
+            justify-content: space-between;
           }
         }
       `}</style>
