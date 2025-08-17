@@ -68,12 +68,13 @@ export default async function handler(req, res) {
         console.log(`   Dernière payée: ${lastPaidCommission}€`);
         console.log(`   Différence: ${commissionDifference}€`);
 
-        // Mettre à jour les valeurs actuelles (toujours)
+        // Mettre à jour les valeurs actuelles ET lastPaidCommission (toujours)
         await prisma.affiliate.update({
           where: { id: affiliateId },
           data: {
             currentTotalBet: totalBet,
             currentCommission: newCommission,
+            lastPaidCommission: newCommission, // On met toujours à jour avec la dernière valeur
             lastUpdated: new Date()
           }
         });
