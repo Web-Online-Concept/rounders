@@ -218,7 +218,7 @@ export default function CommissionsPage() {
                             <>
                               {formatCurrency(affiliate.lastPaymentAmount)}
                               <small className="payment-date">
-                                le {formatDateShort(affiliate.lastPaymentDate)}
+                                {formatDate(affiliate.lastPaymentDate)}
                               </small>
                             </>
                           ) : (
