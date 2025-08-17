@@ -143,6 +143,13 @@ export default function CommissionsPage() {
                 </div>
               </div>
               <div className="stat-card">
+                <div className="stat-icon">🎯</div>
+                <div className="stat-content">
+                  <h3>Total Misé</h3>
+                  <p className="stat-value">{formatCurrency(stats.totalBet)}</p>
+                </div>
+              </div>
+              <div className="stat-card">
                 <div className="stat-icon">💰</div>
                 <div className="stat-content">
                   <h3>{t.commissions.stats.totalCommissions}</h3>
@@ -154,13 +161,6 @@ export default function CommissionsPage() {
                 <div className="stat-content">
                   <h3>{t.commissions.stats.totalPaid}</h3>
                   <p className="stat-value green">{formatCurrency(stats.totalPaid)}</p>
-                </div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-icon">🎯</div>
-                <div className="stat-content">
-                  <h3>Total Misé</h3>
-                  <p className="stat-value">{formatCurrency(stats.totalBet)}</p>
                 </div>
               </div>
             </div>
